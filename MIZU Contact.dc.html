@@ -45,14 +45,15 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
               </sc-for>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:32px;">
-              <input type="text" placeholder="Nom et prénom" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <input type="email" placeholder="E-mail" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <input type="tel" placeholder="Téléphone" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <input type="text" placeholder="Ville" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <textarea placeholder="Message" rows="4" style="grid-column:1 / -1;margin-top:12px;padding:16px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
+              <input type="text" placeholder="Nom et prénom *" value="{{ f.name }}" onChange="{{ setName }}" style="height:60px;padding:0;border:0;border-bottom:1px solid {{ errName }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="email" placeholder="E-mail *" value="{{ f.email }}" onChange="{{ setEmail }}" style="height:60px;padding:0;border:0;border-bottom:1px solid {{ errEmail }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="tel" placeholder="Téléphone" value="{{ f.phone }}" onChange="{{ setPhone }}" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="text" placeholder="Ville" value="{{ f.city }}" onChange="{{ setCity }}" style="height:60px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <textarea placeholder="Message" rows="4" value="{{ f.message }}" onChange="{{ setMessage }}" style="grid-column:1 / -1;margin-top:12px;padding:16px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
             </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:24px;">
-              <button type="button" onClick="{{ send }}" style="min-height:60px;padding:14px 32px;border-radius:999px;border:0;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:15px;font-weight:500;letter-spacing:0.06em;cursor:pointer;" style-hover="background:#7D7063;">Envoyer le message →</button>
+            <div style="display:flex;justify-content:flex-end;align-items:center;gap:20px;margin-top:24px;">
+              <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#A4462F;">{{ errText }}</span></sc-if>
+              <button type="button" onClick="{{ send }}" style="min-height:60px;padding:14px 32px;border-radius:999px;border:0;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:15px;font-weight:500;letter-spacing:0.06em;cursor:pointer;" style-hover="background:#7D7063;">{{ sendLabel }}</button>
             </div>
           </div>
         </sc-if>
@@ -114,9 +115,20 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { subject: 0, sent: false };
+  state = { subject: 0, sent: false, f: { name: '', email: '', phone: '', city: '', message: '' }, tried: false, busy: false, fail: false };
   renderVals() {
-    const { subject, sent } = this.state;
+    const { subject, sent, f, tried, busy, fail } = this.state;
+    const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email || '');
+    const okName = (f.name || '').trim().length > 1;
+    const set = (k) => (e) => this.setState({ f: { ...this.state.f, [k]: e.target.value } });
+    const SUBJECTS = ['Projet particulier', 'Professionnel', 'Service après-vente', 'Autre'];
+    const doSend = () => {
+      if (busy) return;
+      if (!(okName && okEmail)) { this.setState({ tried: true }); return; }
+      this.setState({ busy: true, fail: false });
+      window.MIZU.send('leads', { type: 'contact', subject: SUBJECTS[subject], name: f.name, email: f.email, phone: f.phone, city: f.city, message: f.message, consent: true, lang: window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr', website: '' })
+        .then(() => this.setState({ sent: true, busy: false })).catch(() => this.setState({ busy: false, fail: true }));
+    };
     const subjects = ['Projet particulier', 'Professionnel', 'Service après-vente', 'Autre'].map((label, i) => ({
       label, line: i === subject ? '#2A2622' : '#E4DED6', bg: i === subject ? '#2A2622' : '#FFFFFF', ink: i === subject ? '#FFFFFF' : '#2A2622',
       select: () => this.setState({ subject: i })
@@ -126,7 +138,15 @@ class Component extends DCLogic {
       { who: 'Architectes & promoteurs', what: 'Chiffrage sur plan, échantillons, suivi de chantier', mail: 'pro@mizu.ma' },
       { who: 'Service après-vente', what: 'Installation, entretien, pièces détachées', mail: 'sav@mizu.ma' }
     ];
-    return { subjects, direct, notSent: !sent, sent, send: () => this.setState({ sent: true }) };
+    return {
+      subjects, direct, notSent: !sent, sent, f,
+      setName: set('name'), setEmail: set('email'), setPhone: set('phone'), setCity: set('city'), setMessage: set('message'),
+      errName: tried && !okName ? '#A4462F' : '#D9D1C7', errEmail: tried && !okEmail ? '#A4462F' : '#D9D1C7',
+      hasErr: fail || (tried && !(okName && okEmail)),
+      errText: fail ? 'Envoi impossible pour le moment. Merci de réessayer.' : 'Merci d’indiquer votre nom et un e-mail valide.',
+      sendLabel: busy ? 'Envoi…' : 'Envoyer le message →',
+      send: doSend
+    };
   }
 }
 </script>

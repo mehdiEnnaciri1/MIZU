@@ -219,6 +219,8 @@ class Component extends DCLogic {
         if (!(req(f.name) && okEmail && req(f.phone) && s.consent)) { this.setState({ tried: true }); return; }
         const lead = { ...f, ref: p.ref, at: new Date().toISOString() };
         try { localStorage.setItem('mizu-lead', JSON.stringify(lead)); const log = JSON.parse(localStorage.getItem('mizu-leads') || '[]'); log.push({ ...lead, doc: m.file || m.url || 'demande' }); localStorage.setItem('mizu-leads', JSON.stringify(log)); } catch (e) {}
+        // Envoi au back-end ; si ça échoue, le téléchargement reste possible (le lead local est conservé).
+        try { window.MIZU.send('leads', { type: 'doc_download', name: f.name, email: f.email, phone: f.phone, company: f.company, city: f.city, profile: f.pro ? 'pro' : 'particulier', product_ref: p.ref, file: m.file || m.url || '', consent: true, lang: window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr', website: '' }).catch(() => {}); } catch (e) {}
         this.setState({ step: 'done' });
       },
       firstName: (f.name || '').trim().split(' ')[0],

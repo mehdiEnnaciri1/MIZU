@@ -85,13 +85,13 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
               </sc-for>
             </div>
             <div style="display:flex;flex-direction:column;">
-              <input type="text" placeholder="Nom et prénom" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="text" placeholder="Nom et prénom *" value="{{ f.name }}" onChange="{{ setName }}" style="height:54px;padding:0;border:0;border-bottom:1px solid {{ errName }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
               <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
-                <input type="text" placeholder="Société" style="width:100%;height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="text" placeholder="Société" value="{{ f.company }}" onChange="{{ setCompany }}" style="width:100%;height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
               </sc-if>
-              <input type="tel" placeholder="Téléphone" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <input type="email" placeholder="E-mail" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-              <input type="text" placeholder="Ville du projet" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="tel" placeholder="Téléphone" value="{{ f.phone }}" onChange="{{ setPhone }}" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="email" placeholder="E-mail *" value="{{ f.email }}" onChange="{{ setEmail }}" style="height:54px;padding:0;border:0;border-bottom:1px solid {{ errEmail }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="text" placeholder="Ville du projet" value="{{ f.city }}" onChange="{{ setCity }}" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
             </div>
             <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;flex-direction:column;gap:10px;">
@@ -111,9 +111,10 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
                 </sc-for>
               </div>
             </div>
-            <textarea placeholder="Précisions sur votre projet" rows="3" style="padding:12px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
+            <textarea placeholder="Précisions sur votre projet" rows="3" value="{{ f.notes }}" onChange="{{ setNotes }}" style="padding:12px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
             <button type="button" onClick="{{ toggleVisit }}" style="display:flex;align-items:center;gap:12px;padding:0;background:none;border:0;font-family:Jost, sans-serif;font-size:14px;color:#2A2622;cursor:pointer;text-align:left;"><span style="width:20px;height:20px;border-radius:4px;border:1.5px solid #2A2622;background:{{ visitBg }};display:grid;place-items:center;color:#FFFFFF;font-size:12px;">{{ visitMark }}</span>Je souhaite aussi une consultation au showroom</button>
-            <button type="button" onClick="{{ send }}" style="min-height:54px;border-radius:999px;border:0;background:{{ sendBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ sendCursor }};" style-hover="background:#7D7063;">Envoyer ma demande →</button>
+            <button type="button" onClick="{{ send }}" style="min-height:54px;border-radius:999px;border:0;background:{{ sendBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ sendCursor }};" style-hover="background:#7D7063;">{{ sendLabel }}</button>
+            <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#A4462F;">{{ errText }}</span></sc-if>
             <span style="font-size:12px;line-height:1.6;color:#8C7B6B;">Vos données servent uniquement à établir votre devis.</span>
           </div>
         </sc-if>
@@ -134,7 +135,7 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { pro: false, job: 0, delay: 0, visit: false, sent: false };
+  state = { pro: false, job: 0, delay: 0, visit: false, sent: false, f: { name: '', company: '', phone: '', email: '', city: '', notes: '' }, tried: false, busy: false, fail: false };
   componentDidMount() {
     this.onChange = () => this.forceUpdate();
     this.seed = () => {
@@ -157,7 +158,22 @@ class Component extends DCLogic {
       return { ...p, qty: x.qty, inc: () => upd(x.id, (q) => q + 1), dec: () => upd(x.id, (q) => Math.max(1, q - 1)), remove: () => upd(x.id, () => 0) };
     }).filter(Boolean) : [];
     const n = lines.reduce((a, l) => a + l.qty, 0);
-    const { pro, job, delay, visit, sent } = this.state;
+    const { pro, job, delay, visit, sent, f, tried, busy, fail } = this.state;
+    const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email || '');
+    const okName = (f.name || '').trim().length > 1;
+    const set = (k) => (e) => this.setState({ f: { ...this.state.f, [k]: e.target.value } });
+    const JOBS = ['Architecte', 'Promoteur', 'Hôtellerie', 'Installateur'], DELAYS = ['Moins de 3 mois', '3 à 6 mois', 'Plus de 6 mois'];
+    const doSend = () => {
+      if (!lines.length || busy) return;
+      if (!(okName && okEmail)) { this.setState({ tried: true }); return; }
+      this.setState({ busy: true, fail: false });
+      M.send('quotes', {
+        name: f.name, email: f.email, phone: f.phone, company: pro ? f.company : '', city: f.city, notes: f.notes,
+        profile: pro ? 'pro' : 'particulier', job: pro ? JOBS[job] : '', delay: DELAYS[delay], wants_visit: visit,
+        items: lines.map((l) => ({ ref: l.ref, name: l.model || l.name, brand: l.brand, finish: l.finish, qty: l.qty })),
+        website: ''
+      }).then(() => this.setState({ sent: true, busy: false })).catch(() => this.setState({ busy: false, fail: true }));
+    };
     const chip = (on) => ({ line: on ? '#2A2622' : '#D9D1C7', bg: on ? '#2A2622' : '#FFFFFF', ink: on ? '#FFFFFF' : '#2A2622' });
     return {
       lines,
@@ -173,7 +189,12 @@ class Component extends DCLogic {
       notSent: !sent, sent,
       sendBg: lines.length ? '#2A2622' : '#B5ACA2',
       sendCursor: lines.length ? 'pointer' : 'not-allowed',
-      send: () => { if (lines.length) this.setState({ sent: true }); }
+      f, setName: set('name'), setCompany: set('company'), setPhone: set('phone'), setEmail: set('email'), setCity: set('city'), setNotes: set('notes'),
+      errName: tried && !okName ? '#A4462F' : '#D9D1C7', errEmail: tried && !okEmail ? '#A4462F' : '#D9D1C7',
+      hasErr: fail || (tried && !(okName && okEmail)),
+      errText: fail ? 'Envoi impossible pour le moment. Merci de réessayer.' : 'Merci d’indiquer votre nom et un e-mail valide.',
+      sendLabel: busy ? 'Envoi…' : 'Envoyer ma demande →',
+      send: doSend
     };
   }
 }

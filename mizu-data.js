@@ -94,6 +94,8 @@
     const bk = (p.brand || '').toLowerCase().replace('-', '');
     return docsIndex().filter((d) => d.brandDir.replace('-', '') === bk && (d.special ? d.special(p) : d.re && d.re.test(p.ref)));
   };
-  window.MIZU = { products, maisons, getSel, setSel, sel, addSel, count, byId, param, all, variants, docsFor };
+  // Envoi vers le back-end (/api/<route>) ; rejette si le serveur répond une erreur.
+  const send = (route, body) => fetch('/api/' + route, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+  window.MIZU = { products, maisons, getSel, setSel, sel, addSel, count, byId, param, all, variants, docsFor, send };
   window.dispatchEvent(new Event('mizu-ready'));
 })();

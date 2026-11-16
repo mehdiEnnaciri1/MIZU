@@ -338,9 +338,10 @@ input::placeholder{color:#8C7B6B;}
           <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">Newsletter</span>
           <p style="margin:0;font-size:15px;line-height:1.55;color:#6E6257;">Recevez le Lookbook 2026 et nos nouvelles sélections.</p>
           <div style="display:flex;height:52px;margin-top:6px;">
-            <input type="email" placeholder="Votre adresse e-mail" style="flex:1;min-width:0;height:100%;padding:0 16px;background:#FFFFFF;border:1px solid #D9D1C7;border-right:0;outline:none;color:#2A2622;font-family:Jost, sans-serif;font-size:14px;">
-            <button type="button" style="height:100%;padding:0 24px;border:0;background:#7D7063;color:#FFFFFF;font-family:Jost, sans-serif;font-size:13px;font-weight:600;letter-spacing:0.16em;cursor:pointer;" style-hover="background:#2A2622;">OK</button>
+            <input type="email" placeholder="Votre adresse e-mail" value="{{ nlEmail }}" onChange="{{ setNlEmail }}" style="flex:1;min-width:0;height:100%;padding:0 16px;background:#FFFFFF;border:1px solid #D9D1C7;border-right:0;outline:none;color:#2A2622;font-family:Jost, sans-serif;font-size:14px;">
+            <button type="button" onClick="{{ subscribe }}" style="height:100%;padding:0 24px;border:0;background:#7D7063;color:#FFFFFF;font-family:Jost, sans-serif;font-size:13px;font-weight:600;letter-spacing:0.16em;cursor:pointer;" style-hover="background:#2A2622;">OK</button>
           </div>
+          <sc-if value="{{ nlMsg }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#6E6257;">{{ nlMsg }}</span></sc-if>
           <span style="margin-top:18px;font-size:15px;font-weight:600;">Suivez-nous</span>
           <div style="display:flex;gap:10px;">
             <a href="#instagram" aria-label="Instagram" style="width:44px;height:44px;border-radius:50%;background:#2A2622;display:grid;place-items:center;color:#FFFFFF;" style-hover="background:#7D7063;color:#FFFFFF;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2" width="12" height="12" rx="3.5"></rect><circle cx="8" cy="8" r="2.8"></circle><circle cx="11.6" cy="4.4" r="0.5" fill="currentColor"></circle></svg></a>
@@ -379,7 +380,7 @@ input::placeholder{color:#8C7B6B;}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;headerMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;verre&quot;,&quot;transparent&quot;],&quot;default&quot;:&quot;transparent&quot;,&quot;tsType&quot;:&quot;'verre'|'transparent'&quot;,&quot;section&quot;:&quot;Header&quot;},&quot;heroAutoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;showWhatsApp&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Contact&quot;}}">
 class Component extends DCLogic {
-  state = { tech: 0, scrolled: false, lang: (window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr'), slide: 0, brand: 'Tout', menu: false, maisons: false };
+  state = { tech: 0, scrolled: false, lang: (window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr'), slide: 0, brand: 'Tout', menu: false, maisons: false, nlEmail: '', nlMsg: '' };
   rootRef = React.createRef();
 
   componentDidMount() {
@@ -549,7 +550,16 @@ class Component extends DCLogic {
       maisonsSign: this.state.maisons ? '−' : '+',
       toggleMaisons: () => this.setState((s) => ({ maisons: !s.maisons })),
       setFr: () => window.MIZU_LANG && window.MIZU_LANG.set('fr'),
-      setEn: () => window.MIZU_LANG && window.MIZU_LANG.set('en')
+      setEn: () => window.MIZU_LANG && window.MIZU_LANG.set('en'),
+      nlEmail: this.state.nlEmail, nlMsg: this.state.nlMsg,
+      setNlEmail: (e) => this.setState({ nlEmail: e.target.value }),
+      subscribe: () => {
+        const email = (this.state.nlEmail || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { this.setState({ nlMsg: 'Adresse e-mail invalide.' }); return; }
+        fetch('/api/leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'newsletter', email, consent: true, lang: this.state.lang, website: '' }) })
+          .then((r) => { if (!r.ok) throw new Error(); this.setState({ nlEmail: '', nlMsg: 'Merci, vous êtes inscrit(e).' }); })
+          .catch(() => this.setState({ nlMsg: 'Inscription impossible pour le moment.' }));
+      }
     };
   }
 }

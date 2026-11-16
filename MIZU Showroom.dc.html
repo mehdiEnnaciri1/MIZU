@@ -105,10 +105,10 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
               <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;"><span style="color:#B8986A;margin-right:10px;">04</span>Vos coordonnées</span>
               <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:8px;">
                 <input type="text" placeholder="Nom et prénom" value="{{ name }}" onChange="{{ setName }}" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-                <input type="tel" placeholder="Téléphone" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-                <input type="email" placeholder="E-mail" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-                <input type="text" placeholder="Ville du projet" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
-                <textarea placeholder="Votre projet en quelques mots" rows="3" style="grid-column:1 / -1;margin-top:8px;padding:14px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
+                <input type="tel" placeholder="Téléphone *" value="{{ phone }}" onChange="{{ setPhone }}" style="height:56px;padding:0;border:0;border-bottom:1px solid {{ errPhone }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="email" placeholder="E-mail" value="{{ email }}" onChange="{{ setEmail }}" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="text" placeholder="Ville du projet" value="{{ city }}" onChange="{{ setCity }}" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <textarea placeholder="Votre projet en quelques mots" rows="3" value="{{ project }}" onChange="{{ setProject }}" style="grid-column:1 / -1;margin-top:8px;padding:14px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
               </div>
               <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
                 <span style="font-size:14px;color:#5A4E42;margin-right:6px;">Maisons qui vous intéressent</span>
@@ -120,8 +120,9 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
 
             <div style="display:flex;justify-content:space-between;align-items:center;padding-top:32px;border-top:1px solid #ECE7E0;">
               <span style="font-size:15px;color:#5A4E42;">{{ summary }}</span>
-              <button type="button" onClick="{{ submit }}" style="display:inline-flex;align-items:center;gap:12px;min-height:52px;padding:16px 32px;border-radius:999px;border:0;background:{{ submitBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ submitCursor }};" style-hover="background:#7D7063;">Confirmer le rendez-vous →</button>
+              <button type="button" onClick="{{ submit }}" style="display:inline-flex;align-items:center;gap:12px;min-height:52px;padding:16px 32px;border-radius:999px;border:0;background:{{ submitBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ submitCursor }};" style-hover="background:#7D7063;">{{ submitLabel }}</button>
             </div>
+            <sc-if value="{{ hasErr }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:#A4462F;text-align:right;">{{ errText }}</span></sc-if>
           </div>
         </sc-if>
         <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
@@ -141,7 +142,11 @@ input::placeholder,textarea::placeholder{color:#8C7B6B;}
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
-  state = { kind: 0, day: -1, slot: -1, brands: [], done: false, name: '' };
+  state = { kind: 0, day: -1, slot: -1, brands: [], done: false, name: '', phone: '', email: '', city: '', project: '', tried: false, busy: false, fail: false };
+  valid() {
+    const s = this.state;
+    return (s.name || '').trim().length > 1 && (s.phone || '').trim().length > 5 && (!s.email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email));
+  }
   renderVals() {
     const { kind, day, slot, brands, done } = this.state;
     const kindsD = [['Au showroom', 'Casablanca · 1 h'], ['Sur votre chantier', 'Relevé technique'], ['En visio', '30 min · à distance']];
@@ -170,7 +175,22 @@ class Component extends DCLogic {
       notDone: !done, done,
       submitBg: ready ? '#2A2622' : '#B5ACA2',
       submitCursor: ready ? 'pointer' : 'not-allowed',
-      submit: () => { if (ready) { this.setState({ done: true }); window.scrollTo({ top: 600, behavior: 'smooth' }); } },
+      phone: this.state.phone, email: this.state.email, city: this.state.city, project: this.state.project,
+      setPhone: (e) => this.setState({ phone: e.target.value }), setEmail: (e) => this.setState({ email: e.target.value }),
+      setCity: (e) => this.setState({ city: e.target.value }), setProject: (e) => this.setState({ project: e.target.value }),
+      errPhone: this.state.tried && !this.valid() ? '#A4462F' : '#D9D1C7',
+      hasErr: this.state.fail || (this.state.tried && !this.valid()),
+      errText: this.state.fail ? 'Envoi impossible pour le moment. Merci de réessayer.' : 'Merci d’indiquer votre nom, votre téléphone et un e-mail valide s’il est renseigné.',
+      submitLabel: this.state.busy ? 'Envoi…' : 'Confirmer le rendez-vous →',
+      submit: () => {
+        if (!ready || this.state.busy) return;
+        if (!this.valid()) { this.setState({ tried: true }); return; }
+        const M = window.MIZU, s = this.state;
+        this.setState({ busy: true, fail: false });
+        M.send('appointments', { kind: kindsD[kind][0], slot_label: summary, brands, name: s.name, email: s.email, phone: s.phone, city: s.city, project: s.project, website: '' })
+          .then(() => { this.setState({ done: true, busy: false }); window.scrollTo({ top: 600, behavior: 'smooth' }); })
+          .catch(() => this.setState({ busy: false, fail: true }));
+      },
       restart: () => this.setState({ done: false })
     };
   }
