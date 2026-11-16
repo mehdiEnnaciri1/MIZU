@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>MIZU — Administration</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Jost,sans-serif;background:#F5F1EC;color:#2A2622;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit;font-size:14px}
+.hide{display:none!important}
+.login{min-height:100vh;display:grid;place-items:center;padding:24px}
+.card{background:#fff;border-radius:20px;padding:40px;width:min(420px,100%);box-shadow:0 20px 60px rgba(20,18,16,.12)}
+h1{margin:0 0 6px;font-weight:500;font-size:24px;letter-spacing:.04em;text-transform:uppercase}
+.muted{color:#8C7B6B;font-size:14px}
+.card input{width:100%;height:52px;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-size:15px;margin-top:8px}
+.btn{height:44px;padding:0 22px;border-radius:999px;border:0;background:#2A2622;color:#fff;font-weight:500;cursor:pointer}
+.btn:hover{background:#7D7063}
+.btn.ghost{background:#fff;color:#2A2622;border:1.5px solid #2A2622}
+.btn.ghost:hover{background:#2A2622;color:#fff}
+.btn.sm{height:34px;padding:0 14px;font-size:13px}
+.err{color:#A4462F;font-size:13px;min-height:18px;margin:12px 0 0}
+header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;background:#fff;border-bottom:1px solid #ECE7E0;position:sticky;top:0;z-index:5}
+header b{letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+main{max-width:1280px;margin:0 auto;padding:28px 32px 80px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tab{height:42px;padding:0 20px;border-radius:999px;border:1.5px solid #E4DED6;background:#fff;cursor:pointer;font-weight:500}
+.tab.on{background:#2A2622;color:#fff;border-color:#2A2622}
+.tab i{font-style:normal;margin-left:8px;background:#B8986A;color:#fff;border-radius:999px;padding:1px 8px;font-size:12px}
+.bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.bar input,.bar select{height:40px;border:1.5px solid #E4DED6;border-radius:999px;padding:0 16px;background:#fff;outline:none}
+.bar .grow{flex:1;min-width:200px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:16px;overflow:hidden}
+th{text-align:left;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#8C7B6B;padding:14px 16px;border-bottom:1px solid #ECE7E0;font-weight:600}
+td{padding:14px 16px;border-bottom:1px solid #F1EDE7;font-size:14px;vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:#FBF9F6}
+tr.new td:first-child{box-shadow:inset 3px 0 0 #B8986A}
+td.detail{background:#FBF9F6;padding:18px 24px}
+dl{display:grid;grid-template-columns:160px 1fr;gap:6px 16px;margin:0}
+dt{color:#8C7B6B}dd{margin:0;white-space:pre-wrap;word-break:break-word}
+select.st{border:1.5px solid #E4DED6;border-radius:999px;padding:6px 10px;background:#fff}
+.empty{padding:48px;text-align:center;color:#8C7B6B;background:#fff;border-radius:16px}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#ECE7E0;font-size:12px;font-weight:500}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<section id="login" class="login">
+  <form class="card" id="loginForm">
+    <h1>Administration</h1>
+    <p class="muted" style="margin:0 0 20px">MIZU — espace réservé</p>
+    <input type="email" id="email" placeholder="E-mail" autocomplete="username" required>
+    <input type="password" id="password" placeholder="Mot de passe" autocomplete="current-password" required>
+    <p class="err" id="loginErr"></p>
+    <button class="btn" style="width:100%;margin-top:16px" type="submit">Se connecter</button>
+  </form>
+</section>
+
+<section id="app" class="hide">
+  <header><b>MIZU · Admin</b><div><span class="muted" id="who" style="margin-right:16px"></span><button class="btn ghost sm" id="logout">Déconnexion</button></div></header>
+  <main>
+    <div class="tabs" id="tabs"></div>
+    <div class="bar">
+      <input class="grow" id="q" type="search" placeholder="Rechercher (nom, e-mail, téléphone, référence…)">
+      <select id="statusFilter"></select>
+      <button class="btn ghost sm" id="refresh">Actualiser</button>
+      <button class="btn sm" id="csv">Exporter CSV</button>
+    </div>
+    <div class="scroll" id="list"></div>
+  </main>
+</section>
+
+<script>
+const TABS = [['leads', 'Contacts & documents'], ['quotes', 'Devis'], ['appointments', 'Rendez-vous']];
+const STATUS = {
+  leads: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
+  appointments: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
+  quotes: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['sent', 'Devis envoyé'], ['won', 'Gagné'], ['lost', 'Perdu']]
+};
+const TYPE = { doc_download: 'Document', contact: 'Contact', newsletter: 'Newsletter' };
+const COLS = {
+  leads: [['Date', (r) => fmt(r.created_at)], ['Type', (r) => TYPE[r.type] || r.type], ['Nom', (r) => r.name || '—'], ['Contact', contact], ['Objet', (r) => r.subject || r.product_ref || ''], ],
+  quotes: [['Date', (r) => fmt(r.created_at)], ['Nom', (r) => r.name], ['Contact', contact], ['Pièces', (r) => (r.items || []).reduce((a, i) => a + (i.qty || 1), 0)], ['Échéance', (r) => r.delay || '']],
+  appointments: [['Reçu le', (r) => fmt(r.created_at)], ['Rendez-vous', (r) => r.slot_label], ['Nom', (r) => r.name], ['Contact', contact], ['Maisons', (r) => (r.brands || []).join(', ')]]
+};
+const LABELS = { created_at: 'Reçu le', type: 'Type', name: 'Nom', email: 'E-mail', phone: 'Téléphone', company: 'Société', city: 'Ville', profile: 'Profil', subject: 'Sujet', message: 'Message', product_ref: 'Référence', file: 'Document demandé', consent: 'Consentement', consent_at: 'Consentement le', lang: 'Langue', job: 'Activité', delay: 'Échéance', wants_visit: 'Souhaite une visite', notes: 'Précisions', kind: 'Type de RDV', slot_label: 'Créneau', brands: 'Maisons', project: 'Projet' };
+let token = null, tab = 'leads', rows = {}, open = null;
+const $ = (id) => document.getElementById(id);
+
+function contact(r) { return [r.email, r.phone].filter(Boolean).join('\n'); }
+function fmt(d) { try { return new Date(d).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }); } catch (e) { return d; } }
+function el(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  Object.entries(props || {}).forEach(([k, v]) => { if (k === 'class') e.className = v; else if (k.startsWith('on')) e[k] = v; else e.setAttribute(k, v); });
+  kids.flat().forEach((k) => e.append(k instanceof Node ? k : document.createTextNode(k == null ? '' : String(k))));
+  return e;
+}
+async function api(path, opts = {}) {
+  const r = await fetch('/api/admin/' + path, { ...opts, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token } });
+  if (r.status === 401 || r.status === 403) { logout(); throw new Error('auth'); }
+  if (!r.ok) throw new Error('http ' + r.status);
+  return r.json();
+}
+function logout() { token = null; try { sessionStorage.removeItem('mizu-admin'); } catch (e) {} $('app').classList.add('hide'); $('login').classList.remove('hide'); }
+
+async function load(t) {
+  const d = await api('data?table=' + t);
+  rows[t] = d.rows || [];
+}
+async function loadAll() { await Promise.all(TABS.map((x) => load(x[0]))); renderTabs(); render(); }
+
+function renderTabs() {
+  const box = $('tabs'); box.textContent = '';
+  TABS.forEach(([k, label]) => {
+    const n = (rows[k] || []).filter((r) => r.status === 'new').length;
+    box.append(el('button', { class: 'tab' + (k === tab ? ' on' : ''), onclick: () => { tab = k; open = null; renderTabs(); fillStatus(); render(); } }, label, n ? el('i', {}, n) : ''));
+  });
+}
+function fillStatus() {
+  const s = $('statusFilter'); s.textContent = '';
+  s.append(el('option', { value: '' }, 'Tous les statuts'));
+  STATUS[tab].forEach(([v, l]) => s.append(el('option', { value: v }, l)));
+}
+function visible() {
+  const q = $('q').value.trim().toLowerCase(), st = $('statusFilter').value;
+  return (rows[tab] || []).filter((r) => (!st || r.status === st) && (!q || JSON.stringify(r).toLowerCase().includes(q)));
+}
+function render() {
+  const list = $('list'); list.textContent = '';
+  const data = visible();
+  if (!data.length) { list.append(el('div', { class: 'empty' }, 'Aucune demande.')); return; }
+  const cols = COLS[tab];
+  const table = el('table', {}, el('thead', {}, el('tr', {}, cols.map((c) => el('th', {}, c[0])), el('th', {}, 'Statut'), el('th', {}, ''))));
+  const tb = el('tbody');
+  data.forEach((r) => {
+    const sel = el('select', { class: 'st', onclick: (e) => e.stopPropagation(), onchange: async (e) => {
+      try { await api('row', { method: 'PATCH', body: JSON.stringify({ table: tab, id: r.id, status: e.target.value }) }); r.status = e.target.value; renderTabs(); render(); }
+      catch (err) { alert('Mise à jour impossible.'); }
+    } }, STATUS[tab].map(([v, l]) => { const o = el('option', { value: v }, l); if (v === r.status) o.selected = true; return o; }));
+    const del = el('button', { class: 'btn ghost sm', onclick: async (e) => {
+      e.stopPropagation();
+      if (!confirm('Supprimer définitivement cette demande ?')) return;
+      try { await api('row', { method: 'DELETE', body: JSON.stringify({ table: tab, id: r.id }) }); rows[tab] = rows[tab].filter((x) => x.id !== r.id); renderTabs(); render(); }
+      catch (err) { alert('Suppression impossible.'); }
+    } }, 'Supprimer');
+    tb.append(el('tr', { class: 'row ' + r.status, onclick: () => { open = open === r.id ? null : r.id; render(); } },
+      cols.map((c) => el('td', { style: 'white-space:pre-line' }, c[1](r))), el('td', {}, sel), el('td', {}, del)));
+    if (open === r.id) tb.append(el('tr', {}, el('td', { class: 'detail', colspan: cols.length + 2 }, detail(r))));
+  });
+  table.append(tb); list.append(table);
+}
+function detail(r) {
+  const dl = el('dl');
+  Object.keys(LABELS).forEach((k) => {
+    if (r[k] == null || r[k] === '' || (Array.isArray(r[k]) && !r[k].length)) return;
+    let v = r[k];
+    if (k === 'created_at' || k === 'consent_at') v = fmt(v);
+    else if (typeof v === 'boolean') v = v ? 'Oui' : 'Non';
+    else if (Array.isArray(v)) v = v.join(', ');
+    else if (k === 'type') v = TYPE[v] || v;
+    dl.append(el('dt', {}, LABELS[k]), el('dd', {}, v));
+  });
+  if (Array.isArray(r.items) && r.items.length) {
+    dl.append(el('dt', {}, 'Pièces demandées'), el('dd', {}, r.items.map((i) => '• ' + [i.qty + ' ×', i.brand, i.name, i.finish ? '(' + i.finish + ')' : '', i.ref ? '— réf. ' + i.ref : ''].filter(Boolean).join(' ')).join('\n')));
+  }
+  return dl;
+}
+function csv() {
+  const data = visible();
+  if (!data.length) return;
+  const keys = Object.keys(data[0]).filter((k) => k !== 'id');
+  const q = (v) => '"' + String(v == null ? '' : typeof v === 'object' ? JSON.stringify(v) : v).replace(/"/g, '""') + '"';
+  const out = '﻿' + [keys.join(';')].concat(data.map((r) => keys.map((k) => q(r[k])).join(';'))).join('\r\n');
+  const a = el('a', { href: URL.createObjectURL(new Blob([out], { type: 'text/csv;charset=utf-8' })), download: 'mizu-' + tab + '-' + new Date().toISOString().slice(0, 10) + '.csv' });
+  document.body.append(a); a.click(); a.remove();
+}
+
+async function start() {
+  $('login').classList.add('hide'); $('app').classList.remove('hide');
+  fillStatus();
+  try { await loadAll(); } catch (e) { if (e.message !== 'auth') alert('Chargement impossible.'); }
+}
+$('loginForm').onsubmit = async (e) => {
+  e.preventDefault(); $('loginErr').textContent = '';
+  try {
+    const r = await fetch('/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: $('email').value, password: $('password').value }) });
+    const d = await r.json();
+    if (!r.ok || !d.token) { $('loginErr').textContent = 'E-mail ou mot de passe incorrect.'; return; }
+    token = d.token; try { sessionStorage.setItem('mizu-admin', token); } catch (x) {}
+    $('who').textContent = $('email').value; $('password').value = '';
+    start();
+  } catch (err) { $('loginErr').textContent = 'Connexion impossible pour le moment.'; }
+};
+$('logout').onclick = logout;
+$('refresh').onclick = () => loadAll().catch(() => {});
+$('csv').onclick = csv;
+$('q').oninput = render;
+$('statusFilter').onchange = render;
+try { const t = sessionStorage.getItem('mizu-admin'); if (t) { token = t; start(); } } catch (e) {}
+</script>
+</body>
+</html>

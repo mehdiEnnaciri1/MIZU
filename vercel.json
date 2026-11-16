@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/MIZU%20Accueil%20Desktop%20v2.dc.html" }
+    { "source": "/", "destination": "/MIZU%20Accueil%20Desktop%20v2.dc.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }
