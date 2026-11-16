@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-catalogue.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="solid" hint-size="100%,76px"></dc-import>
+
+  <section data-screen-label="En-tête catalogue" style="background:#F5F1EC;">
+    <div style="max-width:1440px;margin:0 auto;padding:88px 72px 80px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+      <span style="font-size:13px;letter-spacing:0.08em;color:#8C7B6B;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style-hover="color:#2A2622;">Accueil</a> &nbsp;/&nbsp; Catalogue</span>
+      <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:40px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Catalogue</h1>
+      <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">Les pièces TOTO, BAGNODESIGN et JEE-O présentées au showroom MIZU de Casablanca.</p>
+    </div>
+  </section>
+
+  <section data-screen-label="Liste produits" style="padding:72px 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;display:grid;grid-template-columns:260px minmax(0,1fr);column-gap:56px;align-items:start;">
+      <aside style="position:sticky;top:108px;display:flex;flex-direction:column;gap:40px;">
+        <div style="display:flex;flex-direction:column;">
+          <span style="font-size:13px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding-bottom:14px;border-bottom:1px solid #2A2622;">Maison</span>
+          <sc-for list="{{ brands }}" as="b" hint-placeholder-count="4">
+            <button type="button" onClick="{{ b.select }}" style="display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0;background:none;border:0;border-bottom:1px solid #ECE7E0;font-family:Jost, sans-serif;font-size:15px;font-weight:{{ b.fw }};color:{{ b.ink }};cursor:pointer;text-align:left;" style-hover="color:#2A2622;"><span style="display:flex;align-items:center;gap:12px;"><span style="width:8px;height:8px;border-radius:50%;background:{{ b.dot }};border:1px solid #2A2622;"></span>{{ b.label }}</span><span style="font-size:13px;color:#8C7B6B;">{{ b.n }}</span></button>
+          </sc-for>
+        </div>
+        <div style="display:flex;flex-direction:column;">
+          <span style="font-size:13px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;padding-bottom:14px;border-bottom:1px solid #2A2622;">Catégorie</span>
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+            <button type="button" onClick="{{ c.select }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0;background:none;border:0;border-bottom:1px solid #ECE7E0;font-family:Jost, sans-serif;font-size:15px;font-weight:{{ c.fw }};color:{{ c.ink }};cursor:pointer;text-align:left;" style-hover="color:#2A2622;"><span style="display:flex;align-items:center;gap:12px;"><span style="width:14px;height:14px;border-radius:3px;border:1px solid #2A2622;background:{{ c.dot }};"></span>{{ c.label }}</span><span style="font-size:13px;color:#8C7B6B;">{{ c.n }}</span></button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasFilter }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ reset }}" style="align-self:flex-start;background:none;border:0;padding:0;font-family:Jost, sans-serif;font-size:14px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;cursor:pointer;">Effacer les filtres</button>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:12px;padding:24px;border-radius:16px;background:#F5F1EC;">
+          <span style="font-size:15px;font-weight:600;">Un projet complet ?</span>
+          <span style="font-size:14px;line-height:1.6;color:#5A4E42;">Architectes, promoteurs, hôtels : nous préparons un devis sur plan.</span>
+          <a href="MIZU%20Contact.dc.html" style="font-size:14px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;" style-hover="color:#2A2622;">Nous contacter →</a>
+        </div>
+      </aside>
+
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:24px;margin-bottom:40px;border-bottom:1px solid #ECE7E0;">
+          <div style="display:flex;align-items:center;gap:24px;">
+            <span style="font-size:15px;color:#5A4E42;white-space:nowrap;">{{ countLabel }}</span>
+            <input type="search" value="{{ q }}" onChange="{{ setQ }}" placeholder="Filtrer par nom ou référence" style="width:280px;height:40px;padding:0 16px;border-radius:999px;border:1.5px solid #E4DED6;outline:none;background:#FFFFFF;font-family:Jost, sans-serif;font-size:14px;color:#2A2622;">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;font-size:14px;">
+            <span style="color:#8C7B6B;margin-right:8px;">Trier</span>
+            <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="3">
+              <button type="button" onClick="{{ s.select }}" style="min-height:40px;padding:8px 16px;border-radius:999px;border:1.5px solid {{ s.line }};background:#FFFFFF;font-family:Jost, sans-serif;font-size:14px;font-weight:500;color:#2A2622;cursor:pointer;" style-hover="border-color:#2A2622;">{{ s.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:24px;row-gap:56px;">
+          <sc-for list="{{ items }}" as="p" hint-placeholder-count="6">
+            <dc-import name="MIZU-Carte" p="{{ p }}" height="380px" hint-size="100%,520px"></dc-import>
+          </sc-for>
+        </div>
+        <sc-if value="{{ hasMore }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;justify-content:center;margin-top:64px;">
+            <button type="button" onClick="{{ more }}" style="min-height:48px;padding:14px 28px;border-radius:999px;border:1.5px solid #2A2622;background:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;color:#2A2622;cursor:pointer;" style-hover="background:#2A2622;color:#FFFFFF;">{{ moreLabel }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:96px 0;text-align:center;font-size:16px;color:#5A4E42;">Aucune pièce ne correspond à ces filtres.</div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { brand: null, cat: 'Tout', sort: 'Maison', limit: 24, q: '' };
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    window.addEventListener('mizu-ready', this.onReady);
+    if (window.MIZU) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('mizu-ready', this.onReady); }
+  renderVals() {
+    const M = window.MIZU;
+    if (!M) return { brands: [], cats: [], sorts: [], items: [], countLabel: '' };
+    const keyMap = { toto: 'TOTO', bagnodesign: 'BAGNODESIGN', jeeo: 'JEE-O' };
+    const brand = this.state.brand || keyMap[M.param('m')] || 'Tout';
+    const { cat, sort, limit, q } = this.state;
+    const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const nq = norm(q.trim());
+    const P0 = M.all();
+    const P = nq ? P0.filter((p) => norm(p.name + ' ' + p.ref + ' ' + p.cat).includes(nq)) : P0;
+    const byBrand = brand === 'Tout' ? P : P.filter((p) => p.brand === brand);
+    let items = cat === 'Tout' ? byBrand : byBrand.filter((p) => p.cat === cat);
+    if (sort === 'Nom') items = [...items].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === 'Catégorie') items = [...items].sort((a, b) => a.cat.localeCompare(b.cat));
+    const on = (a, b) => a === b;
+    const brands = ['Tout', 'TOTO', 'BAGNODESIGN', 'JEE-O'].map((label) => ({
+      label: label === 'Tout' ? 'Toutes les maisons' : label,
+      n: label === 'Tout' ? P.length : P.filter((p) => p.brand === label).length,
+      fw: on(label, brand) ? 600 : 400, ink: on(label, brand) ? '#2A2622' : '#5A4E42', dot: on(label, brand) ? '#2A2622' : 'transparent',
+      select: () => this.setState({ brand: label, cat: 'Tout', limit: 24 })
+    }));
+    const cc = {}; byBrand.forEach((p) => { cc[p.cat] = (cc[p.cat] || 0) + 1; });
+    const catList = ['Tout', ...Object.keys(cc).sort((a, b) => cc[b] - cc[a])];
+    const cats = catList.map((label) => ({
+      label: label === 'Tout' ? 'Toutes' : label,
+      n: label === 'Tout' ? byBrand.length : byBrand.filter((p) => p.cat === label).length,
+      fw: on(label, cat) ? 600 : 400, ink: on(label, cat) ? '#2A2622' : '#5A4E42', dot: on(label, cat) ? '#2A2622' : 'transparent',
+      select: () => this.setState({ cat: label, limit: 24 })
+    }));
+    const sorts = ['Maison', 'Catégorie', 'Nom'].map((label) => ({ label, line: label === sort ? '#2A2622' : '#E4DED6', select: () => this.setState({ sort: label }) }));
+    const total = items.length;
+    return {
+      brands, cats, sorts,
+      items: items.slice(0, limit),
+      hasMore: total > limit,
+      moreLabel: 'Afficher plus (' + Math.min(total, limit) + ' / ' + total + ')',
+      more: () => this.setState({ limit: limit + 24 }),
+      q,
+      setQ: (e) => this.setState({ q: e.target.value, limit: 24 }),
+      empty: items.length === 0,
+      countLabel: items.length + (items.length > 1 ? ' pièces' : ' pièce'),
+      hasFilter: brand !== 'Tout' || cat !== 'Tout',
+      reset: () => this.setState({ brand: 'Tout', cat: 'Tout', q: '', limit: 24 })
+    };
+  }
+}
+</script>
+</body>
+</html>

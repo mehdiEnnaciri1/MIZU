@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="hero" hint-size="100%,0px"></dc-import>
+
+  <section data-screen-label="Hero Projets" style="position:relative;height:72vh;min-height:560px;overflow:hidden;background:#2A2622;">
+    <img src="img/amb/u1.jpg" alt="Salle de bain réalisée par MIZU" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+    <div style="position:absolute;inset:0;background:rgba(20,18,16,0.45);"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding-top:76px;color:#FFFFFF;text-align:center;">
+      <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:48px;letter-spacing:0.06em;text-transform:uppercase;">Projets</h1>
+      <span style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style="color:#FFFFFF;" style-hover="opacity:0.7;color:#FFFFFF;">Accueil</a> &nbsp;›&nbsp; Projets</span>
+    </div>
+  </section>
+
+  <section data-screen-label="Liste projets" style="padding:120px 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:28px;margin-bottom:64px;text-align:center;">
+        <p style="margin:0;max-width:620px;font-size:17px;line-height:1.8;font-weight:300;color:#5A4E42;text-wrap:pretty;">Résidences, hôtels et villas : une sélection de salles de bain composées avec nos clients et leurs architectes, partout au Maroc.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <sc-for list="{{ types }}" as="t" hint-placeholder-count="5">
+            <button type="button" onClick="{{ t.select }}" style="min-height:44px;padding:10px 20px;border-radius:999px;border:1.5px solid {{ t.line }};background:{{ t.bg }};color:{{ t.ink }};font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;" style-hover="border-color:#2A2622;">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;row-gap:72px;">
+        <sc-for list="{{ items }}" as="p" hint-placeholder-count="4">
+          <button type="button" onClick="{{ p.open }}" onMouseEnter="{{ p.hover }}" onMouseLeave="{{ p.leave }}" style="grid-column:{{ p.col }};display:flex;flex-direction:column;gap:20px;padding:0;background:none;border:0;font-family:Jost, sans-serif;color:#2A2622;text-align:left;cursor:pointer;">
+            <div style="position:relative;width:100%;height:{{ p.h }};border-radius:20px;overflow:hidden;background:#ECE7E0;">
+              <img src="{{ p.img }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover;transform:scale({{ p.scale }});transition:transform 1400ms cubic-bezier(.2,.7,.2,1);">
+              <span style="position:absolute;top:20px;left:20px;padding:8px 14px;border-radius:999px;background:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:0.08em;">{{ p.type }}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:24px;">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:22px;font-weight:500;letter-spacing:0.02em;text-transform:uppercase;">{{ p.name }}</span>
+                <span style="font-size:14px;color:#8C7B6B;">{{ p.city }} · {{ p.year }}</span>
+              </div>
+              <span style="font-size:13px;font-weight:500;letter-spacing:0.1em;color:#5A4E42;">{{ p.brands }}</span>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Bandeau d'appel" style="background:#F5F1EC;">
+    <div style="max-width:1440px;margin:0 auto;padding:128px 72px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;">
+      <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Architectes, promoteurs, hôteliers</h2>
+      <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">Nous vous accompagnons du chiffrage sur plan jusqu’au suivi de chantier.</p>
+      <div style="display:flex;gap:14px;margin-top:24px;">
+        <a href="MIZU%20Contact.dc.html" style="display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:16px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">Parler de votre projet →</a>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+
+  <sc-if value="{{ hasOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ close }}" style="position:fixed;inset:0;z-index:100;background:rgba(42,38,34,0.55);display:grid;place-items:center;padding:48px;">
+      <div onClick="{{ stop }}" style="position:relative;width:min(1180px, 100%);max-height:calc(100vh - 96px);overflow:auto;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);border-radius:24px;background:#FFFFFF;">
+        <div style="min-height:620px;background:#ECE7E0;"><img src="{{ cur.img }}" alt="{{ cur.name }}" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+        <div style="padding:56px 48px;display:flex;flex-direction:column;">
+          <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#8C7B6B;">{{ cur.type }} · {{ cur.city }}</p>
+          <h2 style="margin:0 0 20px;font-family:Jost, sans-serif;font-weight:500;font-size:32px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">{{ cur.name }}</h2>
+          <p style="margin:0 0 28px;font-size:16px;line-height:1.8;font-weight:300;color:#5A4E42;">{{ cur.desc }}</p>
+          <div style="display:flex;flex-direction:column;font-size:14px;">
+            <span style="display:grid;grid-template-columns:120px 1fr;padding:12px 0;border-top:1px solid #ECE7E0;"><span style="color:#8C7B6B;">Maisons</span>{{ cur.brands }}</span>
+            <span style="display:grid;grid-template-columns:120px 1fr;padding:12px 0;border-top:1px solid #ECE7E0;"><span style="color:#8C7B6B;">Année</span>{{ cur.year }}</span>
+            <span style="display:grid;grid-template-columns:120px 1fr;padding:12px 0;border-top:1px solid #ECE7E0;border-bottom:1px solid #ECE7E0;"><span style="color:#8C7B6B;">Prestation</span>{{ cur.scope }}</span>
+          </div>
+          <a href="MIZU%20Contact.dc.html" style="margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:16px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">Un projet similaire ? →</a>
+        </div>
+        <button type="button" aria-label="Fermer" onClick="{{ close }}" style="position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:0;background:#FFFFFF;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 16px rgba(42,38,34,0.15);"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#2A2622" stroke-width="1.6"><path d="M2 2l16 16M18 2L2 18"></path></svg></button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { type: 'Tous', open: -1, hover: -1 };
+  renderVals() {
+    const data = [
+      { name: 'Villa Anfa', city: 'Casablanca', year: '2025', type: 'Villa', brands: 'TOTO · JEE-O', img: 'img/amb/o3.jpg', scope: 'Conseil, fourniture, suivi de pose', desc: 'Une suite parentale ouverte sur le jardin, avec WC lavant NEOREST et douche extérieure JEE-O en inox.' },
+      { name: 'Riad Médina', city: 'Marrakech', year: '2025', type: 'Hôtellerie', brands: 'BAGNODESIGN', img: 'img/amb/f2.jpg', scope: 'Chiffrage sur plan, fourniture', desc: 'Douze chambres équipées de robinetterie bronze et de vasques à poser, accordées au tadelakt.' },
+      { name: 'Appartement Racine', city: 'Casablanca', year: '2024', type: 'Résidence', brands: 'TOTO', img: 'img/amb/m6.jpg', scope: 'Conseil, fourniture', desc: 'Une salle de bain compacte en tons minéraux, autour d’un WC suspendu Tornado Flush et d’une vasque CeFiONtect.' },
+      { name: 'Suite Spa', city: 'Tanger', year: '2024', type: 'Hôtellerie', brands: 'TOTO · BAGNODESIGN', img: 'img/amb/m4.jpg', scope: 'Chiffrage, fourniture, suivi de chantier', desc: 'Un espace bien-être avec baignoire en îlot face à la baie et équipements TOTO dans chaque suite.' },
+      { name: 'Maison de jardin', city: 'Rabat', year: '2024', type: 'Villa', brands: 'JEE-O', img: 'img/amb/o5.jpg', scope: 'Conseil, fourniture', desc: 'Douches de piscine et robinetterie extérieure en inox 316, pensées pour le climat côtier.' },
+      { name: 'Siège social', city: 'Casablanca', year: '2023', type: 'Tertiaire', brands: 'TOTO', img: 'img/amb/u2.jpg', scope: 'Chiffrage sur plan, fourniture', desc: 'Sanitaires de direction équipés de robinets sans contact et de WC lavants.' },
+      { name: 'Villa Palmeraie', city: 'Marrakech', year: '2023', type: 'Villa', brands: 'JEE-O · BAGNODESIGN', img: 'img/amb/o6.jpg', scope: 'Conseil, fourniture, suivi de pose', desc: 'Cinq salles de bain et un pool house, entre inox brossé et finitions bronze.' }
+    ];
+    const { type, open, hover } = this.state;
+    const types = ['Tous', 'Villa', 'Résidence', 'Hôtellerie', 'Tertiaire'].map((label) => ({
+      label: label === 'Tous' ? 'Tous les projets' : label,
+      bg: label === type ? '#2A2622' : '#FFFFFF', ink: label === type ? '#FFFFFF' : '#2A2622', line: label === type ? '#2A2622' : '#E4DED6',
+      select: () => this.setState({ type: label })
+    }));
+    const list = data.map((d, i) => ({ ...d, i })).filter((d) => type === 'Tous' || d.type === type);
+    const pattern = [['1 / span 12', '640px'], ['1 / span 7', '560px'], ['8 / span 5', '560px'], ['1 / span 5', '520px'], ['6 / span 7', '520px']];
+    const items = list.map((d, k) => {
+      const pat = list.length < 3 ? ['span 6', '560px'] : pattern[k % 5];
+      return { ...d, col: pat[0], h: pat[1], scale: hover === d.i ? 1.04 : 1, open: () => this.setState({ open: d.i }), hover: () => this.setState({ hover: d.i }), leave: () => this.setState({ hover: -1 }) };
+    });
+    return {
+      types, items,
+      hasOpen: open >= 0,
+      cur: open >= 0 ? data[open] : {},
+      close: () => this.setState({ open: -1 }),
+      stop: (e) => e.stopPropagation()
+    };
+  }
+}
+</script>
+</body>
+</html>

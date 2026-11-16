@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+input::placeholder,textarea::placeholder{color:#8C7B6B;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-catalogue.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="solid" hint-size="100%,76px"></dc-import>
+
+  <section data-screen-label="En-tête sélection" style="position:relative;overflow:hidden;background:#F5F1EC;">
+    <img src="img/amb/m1.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;">
+    <div style="position:absolute;inset:0;background:rgba(245,241,236,0.84);"></div>
+    <div style="position:relative;max-width:1440px;margin:0 auto;padding:88px 72px 80px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+      <span style="font-size:13px;letter-spacing:0.08em;color:#8C7B6B;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style-hover="color:#2A2622;">Accueil</a> &nbsp;/&nbsp; Ma sélection</span>
+      <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:40px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Ma sélection</h1>
+      <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">Rassemblez vos pièces, nous vous adressons un devis détaillé sous 48 h.</p>
+    </div>
+  </section>
+
+  <section data-screen-label="Sélection et devis" style="padding:72px 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:64px;align-items:start;">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid #2A2622;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;">{{ countLabel }}</span>
+          <a href="MIZU%20Catalogue.dc.html" style="font-size:14px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;" style-hover="color:#2A2622;">+ Ajouter des pièces</a>
+        </div>
+        <sc-for list="{{ lines }}" as="l" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:160px minmax(0,1fr) auto;column-gap:32px;align-items:center;padding:28px 0;border-bottom:1px solid #ECE7E0;">
+            <a href="MIZU%20Produit.dc.html?id={{ l.qid }}" style="position:relative;display:block;height:160px;border-radius:14px;background:#F3F1EE;overflow:hidden;">
+              <sc-if value="{{ l.noSprite }}" hint-placeholder-val="{{ true }}"><img src="{{ l.img }}" alt="{{ l.name }}" style="position:absolute;inset:18px;width:calc(100% - 36px);height:calc(100% - 36px);object-fit:contain;mix-blend-mode:multiply;transform:scale({{ l.zoom }});"></sc-if><sc-if value="{{ l.hasSprite }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:50%;left:50%;height:calc(100% - 36px);aspect-ratio:1;transform:translate(-50%,-50%);background-image:url({{ l.sprite.url }});background-size:{{ l.sprite.size }};background-position:{{ l.sprite.pos }};mix-blend-mode:multiply;"></div></sc-if>
+            </a>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:12px;font-weight:600;letter-spacing:0.14em;color:#8C7B6B;">{{ l.brand }}</span>
+              <a href="MIZU%20Produit.dc.html?id={{ l.qid }}" style="font-size:20px;font-weight:500;" style-hover="color:#7D7063;">{{ l.name }}</a>
+              <span style="font-size:14px;color:#5A4E42;">{{ l.cat }} · {{ l.finish }}</span>
+              <span style="font-size:13px;color:#8C7B6B;">Réf. {{ l.ref }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:16px;">
+              <div style="display:flex;align-items:center;height:44px;border-radius:999px;border:1.5px solid #E4DED6;">
+                <button type="button" aria-label="Moins" onClick="{{ l.dec }}" style="width:40px;height:100%;background:none;border:0;font-size:18px;color:#2A2622;cursor:pointer;">−</button>
+                <span style="min-width:24px;text-align:center;font-size:15px;font-weight:500;">{{ l.qty }}</span>
+                <button type="button" aria-label="Plus" onClick="{{ l.inc }}" style="width:40px;height:100%;background:none;border:0;font-size:18px;color:#2A2622;cursor:pointer;">+</button>
+              </div>
+              <button type="button" onClick="{{ l.remove }}" style="background:none;border:0;padding:0;font-family:Jost, sans-serif;font-size:13px;color:#8C7B6B;text-decoration:underline;text-underline-offset:3px;cursor:pointer;" style-hover="color:#2A2622;">Retirer</button>
+            </div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ empty }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:96px 0;text-align:center;">
+            <span style="font-size:18px;font-weight:500;">Votre sélection est vide</span>
+            <span style="font-size:15px;color:#5A4E42;">Parcourez le catalogue et ajoutez les pièces qui vous intéressent.</span>
+            <a href="MIZU%20Catalogue.dc.html" style="display:inline-flex;align-items:center;min-height:48px;padding:14px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:15px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">Voir le catalogue →</a>
+          </div>
+        </sc-if>
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:48px;">
+          <div style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:15px;font-weight:600;">Devis sous 48 h</span><span style="font-size:14px;line-height:1.6;color:#5A4E42;">Prix, délais et disponibilités pour chaque pièce.</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:15px;font-weight:600;">Conseil technique</span><span style="font-size:14px;line-height:1.6;color:#5A4E42;">Compatibilité avec votre installation vérifiée.</span></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><span style="font-size:15px;font-weight:600;">Sans engagement</span><span style="font-size:14px;line-height:1.6;color:#5A4E42;">Votre sélection reste modifiable à tout moment.</span></div>
+        </div>
+      </div>
+
+      <div style="position:sticky;top:108px;border-radius:24px;background:#F5F1EC;padding:44px 40px;">
+        <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:24px;">
+            <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:26px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Demande de devis</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;background:#FFFFFF;">
+              <sc-for list="{{ profiles }}" as="pr" hint-placeholder-count="2">
+                <button type="button" onClick="{{ pr.select }}" style="min-height:44px;border-radius:999px;border:0;background:{{ pr.bg }};color:{{ pr.ink }};font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;">{{ pr.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;flex-direction:column;">
+              <input type="text" placeholder="Nom et prénom" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
+                <input type="text" placeholder="Société" style="width:100%;height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              </sc-if>
+              <input type="tel" placeholder="Téléphone" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="email" placeholder="E-mail" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+              <input type="text" placeholder="Ville du projet" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            </div>
+            <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <span style="font-size:13px;color:#5A4E42;">Votre activité</span>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <sc-for list="{{ jobs }}" as="j" hint-placeholder-count="4">
+                    <button type="button" onClick="{{ j.select }}" style="min-height:40px;padding:8px 16px;border-radius:999px;border:1.5px solid {{ j.line }};background:{{ j.bg }};color:{{ j.ink }};font-family:Jost, sans-serif;font-size:13px;font-weight:500;cursor:pointer;">{{ j.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <span style="font-size:13px;color:#5A4E42;">Échéance des travaux</span>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ delays }}" as="d" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ d.select }}" style="min-height:40px;padding:8px 16px;border-radius:999px;border:1.5px solid {{ d.line }};background:{{ d.bg }};color:{{ d.ink }};font-family:Jost, sans-serif;font-size:13px;font-weight:500;cursor:pointer;">{{ d.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <textarea placeholder="Précisions sur votre projet" rows="3" style="padding:12px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
+            <button type="button" onClick="{{ toggleVisit }}" style="display:flex;align-items:center;gap:12px;padding:0;background:none;border:0;font-family:Jost, sans-serif;font-size:14px;color:#2A2622;cursor:pointer;text-align:left;"><span style="width:20px;height:20px;border-radius:4px;border:1.5px solid #2A2622;background:{{ visitBg }};display:grid;place-items:center;color:#FFFFFF;font-size:12px;">{{ visitMark }}</span>Je souhaite aussi une consultation au showroom</button>
+            <button type="button" onClick="{{ send }}" style="min-height:54px;border-radius:999px;border:0;background:{{ sendBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ sendCursor }};" style-hover="background:#7D7063;">Envoyer ma demande →</button>
+            <span style="font-size:12px;line-height:1.6;color:#8C7B6B;">Vos données servent uniquement à établir votre devis.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:40px 0;text-align:center;">
+            <span style="width:64px;height:64px;border-radius:50%;background:#FFFFFF;display:grid;place-items:center;"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7D7063" stroke-width="1.6"><path d="M5 13.5l5 5L21 7.5"></path></svg></span>
+            <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:26px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Demande envoyée</h2>
+            <p style="margin:0;font-size:15px;line-height:1.7;color:#5A4E42;">{{ countLabel }} transmises. Vous recevez votre devis sous 48 h.</p>
+            <a href="MIZU%20Catalogue.dc.html" style="margin-top:8px;font-size:14px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;" style-hover="color:#2A2622;">Continuer la visite</a>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { pro: false, job: 0, delay: 0, visit: false, sent: false };
+  componentDidMount() {
+    this.onChange = () => this.forceUpdate();
+    this.seed = () => {
+      const M = window.MIZU;
+      if (M && M.getSel() === null) M.setSel([{ id: 'neorest', qty: 1 }, { id: 'mit', qty: 2 }, { id: 'd01', qty: 1 }]);
+      this.forceUpdate();
+    };
+    window.addEventListener('mizu-ready', this.seed);
+    window.addEventListener('mizu-sel', this.onChange);
+    if (window.MIZU) this.seed();
+  }
+  componentWillUnmount() { window.removeEventListener('mizu-ready', this.seed); window.removeEventListener('mizu-sel', this.onChange); }
+  renderVals() {
+    const M = window.MIZU;
+    const sel = M ? M.sel() : [];
+    const upd = (id, f) => { const l = M.sel().map((x) => x.id === id ? { ...x, qty: f(x.qty) } : x).filter((x) => x.qty > 0); M.setSel(l); };
+    const lines = M ? sel.map((x) => {
+      const p = M.byId(x.id);
+      if (!p) return null;
+      return { ...p, qty: x.qty, inc: () => upd(x.id, (q) => q + 1), dec: () => upd(x.id, (q) => Math.max(1, q - 1)), remove: () => upd(x.id, () => 0) };
+    }).filter(Boolean) : [];
+    const n = lines.reduce((a, l) => a + l.qty, 0);
+    const { pro, job, delay, visit, sent } = this.state;
+    const chip = (on) => ({ line: on ? '#2A2622' : '#D9D1C7', bg: on ? '#2A2622' : '#FFFFFF', ink: on ? '#FFFFFF' : '#2A2622' });
+    return {
+      lines,
+      empty: lines.length === 0,
+      countLabel: n + (n > 1 ? ' pièces' : ' pièce'),
+      profiles: ['Particulier', 'Professionnel'].map((label, i) => ({ label, bg: (i === 1) === pro ? '#2A2622' : 'transparent', ink: (i === 1) === pro ? '#FFFFFF' : '#2A2622', select: () => this.setState({ pro: i === 1 }) })),
+      isPro: pro,
+      jobs: ['Architecte', 'Promoteur', 'Hôtellerie', 'Installateur'].map((label, i) => ({ label, ...chip(i === job), select: () => this.setState({ job: i }) })),
+      delays: ['Moins de 3 mois', '3 à 6 mois', 'Plus de 6 mois'].map((label, i) => ({ label, ...chip(i === delay), select: () => this.setState({ delay: i }) })),
+      visitBg: visit ? '#2A2622' : '#FFFFFF',
+      visitMark: visit ? '✓' : '',
+      toggleVisit: () => this.setState({ visit: !visit }),
+      notSent: !sent, sent,
+      sendBg: lines.length ? '#2A2622' : '#B5ACA2',
+      sendCursor: lines.length ? 'pointer' : 'not-allowed',
+      send: () => { if (lines.length) this.setState({ sent: true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

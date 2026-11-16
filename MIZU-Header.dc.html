@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="mizu-data.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="font-family:Jost, sans-serif;">
+  <sc-if value="{{ spacer }}" hint-placeholder-val="{{ false }}"><div style="height:76px;"></div></sc-if>
+  <header data-screen-label="Header" style="position:fixed;top:0;left:0;right:0;z-index:50;height:76px;background:{{ headerBg }};color:{{ headerInk }};border-bottom:1px solid {{ headerLine }};transition:background 400ms ease, color 400ms ease, border-color 400ms ease;">
+    <div style="max-width:1440px;height:100%;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;">
+      <div style="display:flex;align-items:center;">
+        <button type="button" aria-label="Ouvrir le menu" onClick="{{ openMenu }}" style="width:44px;height:44px;display:grid;place-items:center;justify-items:start;background:none;border:0;padding:0;color:inherit;cursor:pointer;" style-hover="opacity:0.6;">
+          <svg width="34" height="18" viewBox="0 0 34 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M0 1h34M0 9h34M0 17h34"></path></svg>
+        </button>
+      </div>
+      <a href="MIZU%20Accueil%20Desktop%20v2.dc.html" aria-label="MIZU" style="position:relative;display:block;width:110px;height:36px;" style-hover="opacity:0.8;">
+          <img src="img/logos/mizu-white.png" alt="MIZU" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{ logoWhiteOp }};transition:opacity 400ms ease;">
+          <img src="img/logos/mizu-black.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{ logoBlackOp }};transition:opacity 400ms ease;">
+        </a>
+      <div style="display:flex;gap:12px;justify-content:flex-end;align-items:center;font-size:13px;font-weight:500;letter-spacing:0.08em;">
+        <span style="display:flex;gap:8px;align-items:center;margin-right:8px;"><span onClick="{{ setFr }}" style="cursor:pointer;opacity:{{ frOp }};">FR</span><span style="opacity:0.4;">/</span><span onClick="{{ setEn }}" style="cursor:pointer;opacity:{{ enOp }};">EN</span></span>
+        <a href="MIZU%20Recherche.dc.html" aria-label="Rechercher" style="width:44px;height:44px;display:grid;place-items:center;color:inherit;" style-hover="opacity:0.6;color:inherit;">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12.5" cy="9.5" r="7"></circle><path d="M7.5 14.5L1.5 20.5"></path></svg>
+        </a>
+        <a href="MIZU%20Selection.dc.html" aria-label="Ma sélection" style="width:44px;height:44px;display:grid;place-items:center;color:inherit;position:relative;" style-hover="opacity:0.6;color:inherit;">
+          <svg width="22" height="24" viewBox="0 0 22 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 7h18l-1.2 16H3.2z"></path><path d="M7 9V5a4 4 0 0 1 8 0v4"></path></svg>
+          <span style="position:absolute;top:4px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#7D7063;color:#FFFFFF;font-size:10px;font-weight:600;letter-spacing:0;display:grid;place-items:center;">{{ count }}</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:80;background:rgba(245,241,236,0.6);opacity:{{ overlayOp }};pointer-events:{{ overlayPE }};transition:opacity 400ms ease;"></div>
+  <aside aria-label="Menu" style="position:fixed;top:0;left:0;bottom:0;z-index:90;width:380px;display:flex;flex-direction:column;background:#FFFFFF;color:#2A2622;box-shadow:0 0 40px rgba(42,38,34,0.12);transform:translateX({{ drawerX }});transition:transform 500ms cubic-bezier(.2,.7,.2,1);">
+    <div style="position:relative;flex-shrink:0;height:76px;display:grid;place-items:center;border-bottom:1.5px solid #7D7063;">
+      <img src="img/logos/mizu-black.png" alt="MIZU" style="height:30px;width:auto;">
+      <button type="button" aria-label="Fermer le menu" onClick="{{ closeMenu }}" style="position:absolute;top:0;left:100%;width:56px;height:56px;display:grid;place-items:center;border:0;background:#7D7063;color:#FFFFFF;cursor:pointer;" style-hover="background:#2A2622;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l16 16M18 2L2 18"></path></svg>
+      </button>
+    </div>
+    <nav style="flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;">
+      <button type="button" onClick="{{ toggleMaisons }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;width:100%;background:none;border:0;border-bottom:1px solid #ECE7E0;font-family:Jost, sans-serif;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;cursor:pointer;text-align:left;" style-hover="background:#F5F1EC;">Maisons <span style="font-size:22px;font-weight:300;line-height:1;">{{ maisonsSign }}</span></button>
+      <sc-if value="{{ maisonsOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;padding:8px 0 12px;border-bottom:1px solid #ECE7E0;background:#FAF8F5;">
+          <a href="MIZU%20Maison.dc.html?m=toto" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">TOTO</a>
+          <a href="MIZU%20Maison.dc.html?m=bagnodesign" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">BAGNODESIGN</a>
+          <a href="MIZU%20Maison.dc.html?m=jeeo" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">JEE-O</a>
+        </div>
+      </sc-if>
+      <a href="MIZU%20Catalogue.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Catalogue</a>
+      <a href="MIZU%20Technologie.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Technologie TOTO</a>
+      <a href="MIZU%20Projets.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Projets</a>
+      <a href="MIZU%20Showroom.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Showroom &amp; rendez-vous</a>
+      <a href="MIZU%20Selection.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Ma sélection</a>
+      <a href="MIZU%20Contact.dc.html" style="display:flex;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Contact</a>
+      <a href="MIZU%20Recherche.dc.html" style="display:flex;align-items:center;gap:12px;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;"><svg width="16" height="16" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12.5" cy="9.5" r="7"></circle><path d="M7.5 14.5L1.5 20.5"></path></svg>Recherche</a>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:28px;font-size:14px;line-height:1.6;color:#5A4E42;">
+        <span>Showroom : 35, rue 1, Bd de la Mecque, Casablanca</span>
+        <span>Sur rendez-vous uniquement</span>
+        <a href="#whatsapp" style="color:#2A2622;text-decoration:underline;text-underline-offset:3px;" style-hover="color:#7D7063;">Écrire sur WhatsApp</a>
+      </div>
+    </nav>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;variant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;hero&quot;,&quot;solid&quot;],&quot;default&quot;:&quot;solid&quot;,&quot;tsType&quot;:&quot;'hero'|'solid'&quot;}}">
+class Component extends DCLogic {
+  state = { scrolled: false, menu: false, maisons: false, lang: (window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr'), n: 0 };
+  componentDidMount() {
+    this.onScroll = () => { const s = window.scrollY > 40; if (s !== this.state.scrolled) this.setState({ scrolled: s }); };
+    this.onSel = () => this.setState({ n: window.MIZU ? window.MIZU.count() : 0 });
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('mizu-sel', this.onSel);
+    window.addEventListener('storage', this.onSel);
+    window.addEventListener('mizu-ready', this.onSel);
+    this.onLang = () => this.setState({ lang: window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr' });
+    window.addEventListener('mizu-lang', this.onLang);
+    this.onLang();
+    this.onScroll(); this.onSel();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('mizu-sel', this.onSel);
+    window.removeEventListener('storage', this.onSel);
+    window.removeEventListener('mizu-ready', this.onSel);
+  }
+  renderVals() {
+    const { scrolled, menu, maisons, lang, n } = this.state;
+    const hero = (this.props.variant ?? 'solid') === 'hero';
+    const solid = !hero || scrolled;
+    return {
+      spacer: !hero,
+      headerBg: solid ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0)',
+      headerInk: solid ? '#2A2622' : '#FFFFFF',
+      headerLine: solid ? 'rgba(42,38,34,0.08)' : 'rgba(255,255,255,0.2)',
+      logoWhiteOp: solid ? 0 : 1,
+      logoBlackOp: solid ? 1 : 0,
+      count: n,
+      frOp: lang === 'fr' ? 1 : 0.55,
+      enOp: lang === 'en' ? 1 : 0.55,
+      setFr: () => window.MIZU_LANG && window.MIZU_LANG.set('fr'),
+      setEn: () => window.MIZU_LANG && window.MIZU_LANG.set('en'),
+      drawerX: menu ? '0' : 'calc(-100% - 60px)',
+      overlayOp: menu ? 1 : 0,
+      overlayPE: menu ? 'auto' : 'none',
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      maisonsOpen: maisons,
+      maisonsSign: maisons ? '−' : '+',
+      toggleMaisons: () => this.setState((s) => ({ maisons: !s.maisons }))
+    };
+  }
+}
+</script>
+</body>
+</html>

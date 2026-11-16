@@ -1,0 +1,22 @@
+# Autre projet / documents internes (stratégie, benchmarks, copies de travail)
+uploads/
+bo/
+BO CREATIONS LP.dc.html
+
+# Anciennes versions de l'accueil (seule la v2 est utilisée)
+MIZU Accueil Desktop.dc.html
+MIZU Wireframe Accueil.dc.html
+
+# Données sources fournisseurs (xlsx lourds) : décommenter pour les versionner
+data/*.xlsx
+
+# Divers
+.thumbnail
+.vercel/
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+.claude/

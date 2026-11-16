@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+input::placeholder{color:#B5ACA2;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-catalogue.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="solid" hint-size="100%,76px"></dc-import>
+
+  <section data-screen-label="Recherche" style="position:relative;overflow:hidden;background:#F5F1EC;">
+    <img src="img/amb/f1.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%;">
+    <div style="position:absolute;inset:0;background:rgba(245,241,236,0.84);"></div>
+    <div style="position:relative;max-width:1000px;margin:0 auto;padding:96px 72px 72px;display:flex;flex-direction:column;align-items:center;gap:32px;">
+      <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:40px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Recherche</h1>
+      <div style="width:100%;display:flex;align-items:center;gap:20px;border-bottom:1.5px solid #2A2622;">
+        <svg width="26" height="26" viewBox="0 0 22 22" fill="none" stroke="#2A2622" stroke-width="1.4"><circle cx="12.5" cy="9.5" r="7"></circle><path d="M7.5 14.5L1.5 20.5"></path></svg>
+        <input ref="{{ inputRef }}" type="search" value="{{ q }}" onChange="{{ setQ }}" placeholder="Pièce, maison, référence…" style="flex:1;min-width:0;height:84px;padding:0;border:0;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:22px;font-weight:400;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;">
+        <sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ clear }}" style="background:none;border:0;padding:8px;font-family:Jost, sans-serif;font-size:14px;color:#8C7B6B;text-decoration:underline;text-underline-offset:3px;cursor:pointer;">Effacer</button>
+        </sc-if>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;">
+        <span style="font-size:13px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:#8C7B6B;margin-right:6px;">Recherches fréquentes</span>
+        <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="5">
+          <button type="button" onClick="{{ s.go }}" style="min-height:40px;padding:8px 18px;border-radius:999px;border:1.5px solid #D9D1C7;background:#FFFFFF;font-family:Jost, sans-serif;font-size:14px;font-weight:500;color:#2A2622;cursor:pointer;" style-hover="border-color:#2A2622;">{{ s.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Résultats" style="padding:72px 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <sc-if value="{{ hasPages }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:64px;">
+          <span style="display:block;padding-bottom:16px;margin-bottom:8px;border-bottom:1px solid #2A2622;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;">Pages</span>
+          <sc-for list="{{ pages }}" as="pg" hint-placeholder-count="1">
+            <a href="{{ pg.href }}" style="display:flex;justify-content:space-between;align-items:center;min-height:64px;border-bottom:1px solid #ECE7E0;font-size:18px;font-weight:500;" style-hover="color:#7D7063;"><span>{{ pg.label }} <span style="font-size:14px;font-weight:400;color:#8C7B6B;margin-left:12px;">{{ pg.sub }}</span></span><span>→</span></a>
+          </sc-for>
+        </div>
+      </sc-if>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;margin-bottom:40px;border-bottom:1px solid #2A2622;">
+        <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;">{{ resultTitle }}</span>
+        <span style="font-size:14px;color:#8C7B6B;">{{ resultCount }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:48px;">
+        <sc-for list="{{ results }}" as="p" hint-placeholder-count="4">
+          <dc-import name="MIZU-Carte" p="{{ p }}" hint-size="100%,480px"></dc-import>
+        </sc-for>
+      </div>
+      <sc-if value="{{ noResult }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:72px 0;text-align:center;">
+          <span style="font-size:18px;font-weight:500;">Aucun résultat pour « {{ q }} »</span>
+          <span style="font-size:15px;color:#5A4E42;">Essayez une maison, une catégorie ou une référence. Nos conseillers peuvent aussi vous orienter.</span>
+          <a href="#whatsapp" style="font-size:15px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;" style-hover="color:#2A2622;">Écrire sur WhatsApp</a>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { q: null };
+  inputRef = React.createRef();
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    window.addEventListener('mizu-ready', this.onReady);
+    if (window.MIZU) this.forceUpdate();
+    setTimeout(() => this.inputRef.current && this.inputRef.current.focus(), 300);
+  }
+  componentWillUnmount() { window.removeEventListener('mizu-ready', this.onReady); }
+  renderVals() {
+    const M = window.MIZU;
+    const q = this.state.q ?? ((M && M.param('q')) || '');
+    const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const nq = norm(q.trim());
+    const P = M ? M.all() : [];
+    const found = nq ? P.filter((p) => norm([p.name, p.brand, p.cat, p.ref, (p.tech || []).join(' ')].join(' ')).includes(nq)) : (M ? M.products.slice(0, 8) : []);
+    const results = found.slice(0, 48);
+    const pageIdx = [
+      { label: 'TOTO', sub: 'Maison · Japon', href: 'MIZU%20Maison.dc.html?m=toto', k: 'toto japon washlet neorest' },
+      { label: 'BAGNODESIGN', sub: 'Maison · Royaume-Uni', href: 'MIZU%20Maison.dc.html?m=bagnodesign', k: 'bagnodesign bagno royaume-uni bronze' },
+      { label: 'JEE-O', sub: 'Maison · Pays-Bas', href: 'MIZU%20Maison.dc.html?m=jeeo', k: 'jee-o jeeo pays-bas inox exterieur' },
+      { label: 'Technologie TOTO', sub: 'Washlet, Tornado Flush, CeFiONtect, Ewater+', href: 'MIZU%20Technologie.dc.html', k: 'technologie washlet tornado cefiontect ewater' },
+      { label: 'Showroom & rendez-vous', sub: 'Casablanca', href: 'MIZU%20Showroom.dc.html', k: 'showroom rendez-vous rdv casablanca consultation' },
+      { label: 'Projets', sub: 'Réalisations', href: 'MIZU%20Projets.dc.html', k: 'projets realisations villa hotel' }
+    ];
+    const pages = nq ? pageIdx.filter((p) => norm(p.k + ' ' + p.label).includes(nq)) : [];
+    const suggestions = ['Washlet', 'Robinetterie', 'Baignoire', 'Inox brossé', 'Bronze'].map((label) => ({ label, go: () => this.setState({ q: label }) }));
+    return {
+      inputRef: this.inputRef,
+      q, hasQ: !!q,
+      setQ: (e) => this.setState({ q: e.target.value }),
+      clear: () => this.setState({ q: '' }),
+      suggestions, pages, hasPages: pages.length > 0,
+      results,
+      noResult: !!nq && results.length === 0 && pages.length === 0,
+      resultTitle: nq ? 'Pièces' : 'Nouveautés',
+      resultCount: nq ? found.length + (found.length > 1 ? ' résultats' : ' résultat') : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

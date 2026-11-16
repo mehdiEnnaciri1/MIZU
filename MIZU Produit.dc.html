@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-catalogue.js"></script>
+<script src="mizu-docs.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="solid" hint-size="100%,76px"></dc-import>
+
+  <section data-screen-label="Fiche produit" style="padding:40px 0 144px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <span style="display:block;margin-bottom:32px;font-size:13px;letter-spacing:0.06em;color:#8C7B6B;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style-hover="color:#2A2622;">Accueil</a> &nbsp;/&nbsp; <a href="MIZU%20Maison.dc.html?m={{ mKey }}" style-hover="color:#2A2622;">{{ p.brand }}</a> &nbsp;/&nbsp; <a href="MIZU%20Catalogue.dc.html" style-hover="color:#2A2622;">{{ p.cat }}</a> &nbsp;/&nbsp; <span style="color:#2A2622;">{{ title }}</span></span>
+      <div style="display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);column-gap:72px;align-items:start;">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="position:relative;height:680px;border-radius:24px;background:#F3F1EE;overflow:hidden;">
+            <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="1">
+              <img src="{{ g.src }}" alt="{{ p.name }}" style="position:absolute;inset:{{ g.inset }};width:{{ g.w }};height:{{ g.h }};object-fit:{{ g.fit }};mix-blend-mode:{{ g.blend }};transform:scale({{ g.zoom }});opacity:{{ g.op }};transition:opacity 500ms ease;">
+            </sc-for>
+            <sc-if value="{{ spriteOn }}" hint-placeholder-val="{{ false }}"><div role="img" aria-label="{{ p.name }}" style="position:absolute;top:50%;left:50%;height:calc(100% - 160px);max-width:calc(100% - 160px);aspect-ratio:1;transform:translate(-50%,-50%);background-image:url({{ p.sprite.url }});background-size:{{ p.sprite.size }};background-position:{{ p.sprite.pos }};mix-blend-mode:multiply;"></div></sc-if>
+            <span style="position:absolute;top:20px;left:20px;padding:8px 14px;border-radius:999px;background:#FFFFFF;font-size:12px;font-weight:600;letter-spacing:0.08em;">{{ p.brand }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;">
+            <sc-for list="{{ gallery }}" as="g" hint-placeholder-count="3">
+              <button type="button" onClick="{{ g.select }}" style="position:relative;height:128px;padding:0;border-radius:14px;border:1.5px solid {{ g.line }};background:#F3F1EE;overflow:hidden;cursor:pointer;">
+                <img src="{{ g.src }}" alt="" style="position:absolute;inset:{{ g.tInset }};width:{{ g.tW }};height:{{ g.tH }};object-fit:{{ g.fit }};mix-blend-mode:{{ g.blend }};opacity:{{ g.tOp }};">
+                <sc-if value="{{ g.isSprite }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:50%;left:50%;height:calc(100% - 28px);aspect-ratio:1;transform:translate(-50%,-50%);background-image:url({{ p.sprite.url }});background-size:{{ p.sprite.size }};background-position:{{ p.sprite.pos }};mix-blend-mode:multiply;"></div></sc-if>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="position:sticky;top:108px;display:flex;flex-direction:column;">
+          <p style="margin:0 0 14px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#8C7B6B;">{{ p.brand }} · {{ p.cat }}</p>
+          <h1 style="margin:0 0 10px;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.15;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;text-wrap:balance;">{{ title }}</h1>
+          <span style="font-size:14px;letter-spacing:0.04em;color:#8C7B6B;">Réf. {{ p.ref }}</span>
+          <p style="margin:28px 0 16px;font-size:16px;line-height:1.8;font-weight:300;color:#5A4E42;text-wrap:pretty;white-space:pre-line;">{{ desc }}</p>
+          <sc-if value="{{ hasUrl }}" hint-placeholder-val="{{ false }}">
+            <a href="{{ p.url }}" target="_blank" rel="noopener" style="align-self:flex-start;margin-bottom:28px;font-size:14px;font-weight:500;color:#7D7063;text-decoration:underline;text-underline-offset:4px;" style-hover="color:#2A2622;">Voir sur le site officiel ↗</a>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:14px;padding:24px 0;border-top:1px solid #ECE7E0;">
+            <span style="font-size:14px;"><span style="font-weight:600;">Finition</span> <span style="color:#5A4E42;margin-left:8px;">{{ finishName }}</span></span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <sc-for list="{{ finishes }}" as="f" hint-placeholder-count="2">
+                <a href="{{ f.href }}" onClick="{{ f.select }}" title="{{ f.name }}" style="display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:6px 14px 6px 8px;border-radius:999px;border:1.5px solid {{ f.ring }};background:#FFFFFF;font-size:13px;color:#2A2622;" style-hover="border-color:#2A2622;color:#2A2622;"><span style="width:24px;height:24px;border-radius:50%;background:{{ f.hex }};border:1px solid rgba(42,38,34,0.15);"></span>{{ f.short }}</a>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;padding-top:8px;">
+            <div style="display:flex;align-items:center;height:52px;border-radius:999px;border:1.5px solid #E4DED6;">
+              <button type="button" aria-label="Moins" onClick="{{ dec }}" style="width:48px;height:100%;background:none;border:0;font-size:20px;color:#2A2622;cursor:pointer;">−</button>
+              <span style="min-width:28px;text-align:center;font-size:16px;font-weight:500;">{{ qty }}</span>
+              <button type="button" aria-label="Plus" onClick="{{ inc }}" style="width:48px;height:100%;background:none;border:0;font-size:20px;color:#2A2622;cursor:pointer;">+</button>
+            </div>
+            <button type="button" onClick="{{ add }}" style="flex:1;height:52px;border-radius:999px;border:0;background:{{ addBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:background-color .25s ease;" style-hover="background:#7D7063;">{{ addLabel }}</button>
+          </div>
+          <button type="button" onClick="{{ quote }}" style="margin-top:12px;height:52px;border-radius:999px;border:1.5px solid #2A2622;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:pointer;" style-hover="background:#2A2622;color:#FFFFFF;">Demander un devis</button>
+          <a href="#whatsapp" style="margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 13l.8-2.6A5.5 5.5 0 1 1 6 12.6z" stroke-linejoin="round"></path></svg>Une question sur cette pièce ? <span style="text-decoration:underline;text-underline-offset:3px;">Écrire sur WhatsApp</span></a>
+
+          <div style="margin-top:36px;display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:14px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid #2A2622;">Documents techniques</span>
+            <sc-for list="{{ docs }}" as="d" hint-placeholder-count="1">
+              <button type="button" onClick="{{ d.open }}" style="display:grid;grid-template-columns:48px minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;min-height:64px;padding:10px 16px 10px 10px;border:0;border-radius:14px;background:#F5F1EC;font-family:Jost, sans-serif;color:#2A2622;text-align:left;cursor:pointer;" style-hover="background:#ECE7E0;">
+                <span style="width:48px;height:48px;border-radius:10px;background:#FFFFFF;display:grid;place-items:center;font-size:11px;font-weight:600;letter-spacing:0.08em;color:#7D7063;">{{ d.extLabel }}</span>
+                <span style="display:flex;flex-direction:column;gap:2px;min-width:0;"><span style="font-size:15px;font-weight:500;">{{ d.label }}</span><span style="font-size:12px;color:#8C7B6B;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ d.file }}</span></span>
+                <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;">Télécharger<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2v10M4.5 7.5L9 12l4.5-4.5M3 15.5h12"></path></svg></span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ noDocs }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:14px;background:#F5F1EC;">
+                <span style="font-size:14px;line-height:1.6;color:#5A4E42;">Fiche technique, notice d’installation et fichiers CAO de cette pièce.</span>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <button type="button" onClick="{{ openOfficial }}" style="display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:10px 20px;border:0;border-radius:999px;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;" style-hover="background:#7D7063;">Télécharger la fiche technique<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2v10M4.5 7.5L9 12l4.5-4.5M3 15.5h12"></path></svg></button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+
+          <div style="margin-top:36px;border-top:1px solid #2A2622;">
+            <sc-for list="{{ panels }}" as="a" hint-placeholder-count="3">
+              <div style="border-bottom:1px solid #ECE7E0;">
+                <button type="button" onClick="{{ a.toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;min-height:60px;padding:0;background:none;border:0;font-family:Jost, sans-serif;font-size:14px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#2A2622;cursor:pointer;text-align:left;">{{ a.title }}<span style="font-size:22px;font-weight:300;letter-spacing:0;">{{ a.sign }}</span></button>
+                <div style="display:grid;grid-template-rows:{{ a.rows }};transition:grid-template-rows 400ms cubic-bezier(.2,.7,.2,1);">
+                  <div style="overflow:hidden;">
+                    <div style="display:flex;flex-direction:column;padding-bottom:20px;">
+                      <sc-for list="{{ a.rowsList }}" as="r" hint-placeholder-count="2">
+                        <div style="display:grid;grid-template-columns:140px 1fr;gap:16px;padding:8px 0;font-size:14px;line-height:1.6;"><span style="color:#8C7B6B;">{{ r.k }}</span><span style="color:#2A2622;">{{ r.v }}</span></div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Recommandations" style="padding:0 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <h2 style="margin:0 0 56px;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;text-align:center;">Vous aimerez aussi</h2>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:48px;">
+        <sc-for list="{{ related }}" as="r" hint-placeholder-count="4">
+          <dc-import name="MIZU-Carte" p="{{ r }}" hint-size="100%,480px"></dc-import>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed;inset:0;z-index:120;background:rgba(42,38,34,0.55);display:grid;place-items:center;padding:32px;font-family:Jost, sans-serif;">
+      <div onClick="{{ stop }}" role="dialog" aria-modal="true" style="position:relative;width:min(560px, 100%);max-height:calc(100vh - 64px);overflow:auto;border-radius:24px;background:#FFFFFF;padding:48px 48px 40px;color:#2A2622;">
+        <button type="button" aria-label="Fermer" onClick="{{ closeModal }}" style="position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;border:0;background:#F5F1EC;display:grid;place-items:center;cursor:pointer;"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="#2A2622" stroke-width="1.8"><path d="M2 2l16 16M18 2L2 18"></path></svg></button>
+        <sc-if value="{{ formStep }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <p style="margin:0 0 10px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#8C7B6B;">{{ p.brand }} · {{ p.ref }}</p>
+            <h2 style="margin:0 0 8px;font-family:Jost, sans-serif;font-weight:500;font-size:26px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Télécharger la documentation</h2>
+            <p style="margin:0 0 16px;font-size:15px;line-height:1.7;font-weight:300;color:#5A4E42;">{{ modalIntro }}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;padding:4px;margin-bottom:8px;border-radius:999px;background:#F5F1EC;">
+              <sc-for list="{{ profiles }}" as="pr" hint-placeholder-count="2">
+                <button type="button" onClick="{{ pr.select }}" style="min-height:40px;border-radius:999px;border:0;background:{{ pr.bg }};color:{{ pr.ink }};font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;">{{ pr.label }}</button>
+              </sc-for>
+            </div>
+            <input type="text" placeholder="Nom et prénom *" value="{{ f.name }}" onChange="{{ setName }}" style="height:54px;padding:0;border:0;border-bottom:1px solid {{ errName }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            <input type="email" placeholder="E-mail *" value="{{ f.email }}" onChange="{{ setEmail }}" style="height:54px;padding:0;border:0;border-bottom:1px solid {{ errEmail }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            <input type="tel" placeholder="Téléphone *" value="{{ f.phone }}" onChange="{{ setPhone }}" style="height:54px;padding:0;border:0;border-bottom:1px solid {{ errPhone }};outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            <sc-if value="{{ isPro }}" hint-placeholder-val="{{ false }}">
+              <input type="text" placeholder="Société / cabinet" value="{{ f.company }}" onChange="{{ setCompany }}" style="width:100%;height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            </sc-if>
+            <input type="text" placeholder="Ville" value="{{ f.city }}" onChange="{{ setCity }}" style="height:54px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+            <button type="button" onClick="{{ toggleConsent }}" style="display:flex;align-items:flex-start;gap:12px;margin-top:16px;padding:0;background:none;border:0;font-family:Jost, sans-serif;font-size:13px;line-height:1.6;color:#5A4E42;cursor:pointer;text-align:left;"><span style="flex-shrink:0;width:20px;height:20px;margin-top:1px;border-radius:4px;border:1.5px solid {{ errConsent }};background:{{ consentBg }};display:grid;place-items:center;color:#FFFFFF;font-size:12px;">{{ consentMark }}</span>J’accepte que MIZU me recontacte au sujet de mon projet. *</button>
+            <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+              <span style="margin-top:8px;font-size:13px;color:#A4462F;">Merci de remplir les champs obligatoires.</span>
+            </sc-if>
+            <button type="button" onClick="{{ submitLead }}" style="margin-top:20px;min-height:54px;border-radius:999px;border:0;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:pointer;" style-hover="background:#7D7063;">{{ submitLabel }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ doneStep }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:16px 0 8px;text-align:center;">
+            <span style="width:64px;height:64px;border-radius:50%;background:#F5F1EC;display:grid;place-items:center;"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7D7063" stroke-width="1.6"><path d="M5 13.5l5 5L21 7.5"></path></svg></span>
+            <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:24px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Merci {{ firstName }}</h2>
+            <p style="margin:0;font-size:15px;line-height:1.7;color:#5A4E42;">{{ doneText }}</p>
+            <sc-if value="{{ doneIsFile }}" hint-placeholder-val="{{ false }}"><a href="{{ doneHref }}" download="{{ doneFile }}" onClick="{{ afterGo }}" style="margin-top:8px;display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:12px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:15px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">{{ redoLabel }}<svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 2v10M4.5 7.5L9 12l4.5-4.5M3 15.5h12"></path></svg></a></sc-if>
+            <sc-if value="{{ doneIsUrl }}" hint-placeholder-val="{{ false }}"><a href="{{ doneHref }}" target="_blank" rel="noopener noreferrer" onClick="{{ afterGo }}" style="margin-top:8px;display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:12px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-family:Jost, sans-serif;font-size:15px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">{{ redoLabel }} ↗</a></sc-if>
+            <button type="button" onClick="{{ closeModal }}" style="min-height:44px;padding:8px 20px;border:0;background:none;font-family:Jost, sans-serif;font-size:14px;color:#5A4E42;cursor:pointer;text-decoration:underline;text-underline-offset:4px;">Revenir à la fiche produit</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;productId&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;neorest&quot;,&quot;zero&quot;,&quot;mit&quot;,&quot;bai&quot;,&quot;d01&quot;,&quot;mur&quot;],&quot;default&quot;:&quot;neorest&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  lead() { try { return JSON.parse(localStorage.getItem('mizu-lead')) || null; } catch (e) { return null; } }
+  openModal(target) {
+    const l = this.lead();
+    this.setState({ modal: target, step: 'form', f: l || { name: '', email: '', phone: '', company: '', city: '', pro: false }, consent: !!l, tried: false });
+  }
+  officialUrl(p) {
+    if (p.url) return p.url;
+    const q = encodeURIComponent(p.ref || p.name || '');
+    if (p.brand === 'TOTO') return 'https://eu.toto.com/fr/search?q=' + q;
+    if (p.brand === 'JEE-O') return 'https://jee-o.com/fr/?s=' + q;
+    return 'https://bagnodesign.it/?s=' + q;
+  }
+  deliver(t) {
+    if (!t) return;
+    if (t.kind === 'file') {
+      const a = document.createElement('a'); a.href = t.path; a.download = t.file; document.body.appendChild(a); a.click(); a.remove();
+    } else if (t.url) {
+      const w = window.open(t.url, '_blank');
+      if (w) { try { w.opener = null; } catch (e) {} }
+    }
+  }
+  modalVals(p) {
+    const s = this.state, f = s.f || {}, m = s.modal;
+    const req = (v) => (v || '').trim().length > 1;
+    const okEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email || '');
+    const bad = (ok) => (s.tried && !ok ? '#A4462F' : '#D9D1C7');
+    const set = (k) => (e) => this.setState({ f: { ...f, [k]: e.target.value } });
+    const isFile = m && m.kind === 'file';
+    const toOfficial = m && m.kind === 'url';
+    return {
+      modalOpen: !!m,
+      formStep: s.step === 'form',
+      doneStep: s.step === 'done',
+      modalIntro: isFile ? 'Renseignez vos coordonnées pour télécharger « ' + m.label + ' ».' : 'Renseignez vos coordonnées pour accéder à la documentation technique de cette pièce.',
+      f,
+      isPro: !!f.pro,
+      profiles: ['Particulier', 'Professionnel'].map((label, i) => ({ label, bg: (i === 1) === !!f.pro ? '#2A2622' : 'transparent', ink: (i === 1) === !!f.pro ? '#FFFFFF' : '#2A2622', select: () => this.setState({ f: { ...f, pro: i === 1 } }) })),
+      setName: set('name'), setEmail: set('email'), setPhone: set('phone'), setCompany: set('company'), setCity: set('city'),
+      errName: bad(req(f.name)), errEmail: bad(okEmail), errPhone: bad(req(f.phone)), errConsent: s.tried && !s.consent ? '#A4462F' : '#2A2622',
+      consentBg: s.consent ? '#2A2622' : '#FFFFFF', consentMark: s.consent ? '✓' : '',
+      toggleConsent: () => this.setState({ consent: !s.consent }),
+      hasError: !!s.tried && !(req(f.name) && okEmail && req(f.phone) && s.consent),
+      submitLabel: 'Valider mes informations',
+      submitLead: () => {
+        if (!(req(f.name) && okEmail && req(f.phone) && s.consent)) { this.setState({ tried: true }); return; }
+        const lead = { ...f, ref: p.ref, at: new Date().toISOString() };
+        try { localStorage.setItem('mizu-lead', JSON.stringify(lead)); const log = JSON.parse(localStorage.getItem('mizu-leads') || '[]'); log.push({ ...lead, doc: m.file || m.url || 'demande' }); localStorage.setItem('mizu-leads', JSON.stringify(log)); } catch (e) {}
+        this.setState({ step: 'done' });
+      },
+      firstName: (f.name || '').trim().split(' ')[0],
+      doneText: isFile ? 'Vos informations sont enregistrées. Votre document « ' + m.label + ' » est prêt à être téléchargé.' : 'Vos informations sont enregistrées. La documentation de cette pièce est disponible sur le site officiel ' + p.brand + '.',
+      doneIsFile: !!isFile, doneIsUrl: !!toOfficial,
+      doneHref: m ? (isFile ? m.path : m.url) : '', doneFile: m && m.file ? m.file : '',
+      afterGo: () => setTimeout(() => this.setState({ modal: null }), 300),
+      redoLabel: isFile ? 'Télécharger le document' : 'Ouvrir le site officiel',
+      closeModal: () => this.setState({ modal: null }),
+      stop: (e) => e.stopPropagation()
+    };
+  }
+  state = { img: 0, fin: 0, qty: 1, open: 0, added: false };
+  componentDidMount() {
+    this.onReady = () => this.forceUpdate();
+    window.addEventListener('mizu-ready', this.onReady);
+    if (window.MIZU) this.forceUpdate();
+  }
+  componentWillUnmount() { window.removeEventListener('mizu-ready', this.onReady); clearTimeout(this.t); }
+  renderVals() {
+    const M = window.MIZU;
+    if (!M) return { p: {}, gallery: [], finishes: [], panels: [], related: [] };
+    const p = M.byId(M.param('id')) || M.byId(this.props.productId ?? 'neorest') || M.products[0];
+    const mKey = Object.values(M.maisons).find((m) => m.name === p.brand).key;
+    const maison = M.maisons[mKey];
+    const { img, fin, qty, open, added } = this.state;
+    const srcs = [{ src: p.img, prod: true }, ...maison.amb.map((s) => ({ src: s, prod: false }))];
+    const gallery = srcs.map((g, i) => ({
+      src: g.src,
+      isSprite: g.prod && !!p.sprite,
+      tOp: g.prod && p.sprite ? 0 : 1,
+      inset: g.prod ? '80px' : '0px', w: g.prod ? 'calc(100% - 160px)' : '100%', h: g.prod ? 'calc(100% - 160px)' : '100%',
+      tInset: g.prod ? '14px' : '0px', tW: g.prod ? 'calc(100% - 28px)' : '100%', tH: g.prod ? 'calc(100% - 28px)' : '100%',
+      fit: g.prod ? 'contain' : 'cover', blend: g.prod ? 'multiply' : 'normal', zoom: g.prod ? p.zoom : 1,
+      op: i === img && !(g.prod && p.sprite) ? 1 : 0, line: i === img ? '#2A2622' : 'transparent',
+      select: () => this.setState({ img: i })
+    }));
+    const hexFor = (n) => {
+      const s = (n || '').toLowerCase();
+      const t = [['black', '#2A2622'], ['noir', '#2A2622'], ['white', '#F4F2EE'], ['blanc', '#F4F2EE'], ['chrome', '#C9CBCC'], ['gold', '#C9A55C'], ['or ', '#C9A55C'], ['brass', '#B89155'], ['laiton', '#B89155'], ['bronze', '#8A6E4B'], ['copper', '#B4704B'], ['cuivre', '#B4704B'], ['nickel', '#A9A59C'], ['gunmetal', '#5C5A57'], ['graphite', '#4A4845'], ['stainless', '#B9B7B2'], ['inox', '#B9B7B2'], ['brossé', '#B9B7B2'], ['grey', '#9A958E'], ['gris', '#9A958E']];
+      const hit = t.find((x) => (s + ' ').includes(x[0]));
+      return hit ? hit[1] : '#E4DED6';
+    };
+    let finishes, fl;
+    if (p.ext) {
+      const vs = M.variants(p);
+      fl = vs.map((v) => [v.finish || 'Standard']);
+      finishes = vs.map((v) => ({ name: v.finish || 'Standard', short: (v.finish || 'Standard').split('/')[0], hex: hexFor(v.finish), ring: v.id === p.id ? '#2A2622' : '#E4DED6', href: 'MIZU%20Produit.dc.html?id=' + v.qid, select: () => {} }));
+    } else {
+      fl = p.finishes.length ? p.finishes : [[p.finish, '#E4DED6']];
+      finishes = fl.map((f, i) => ({ name: f[0], short: f[0], hex: f[1], ring: i === fin ? '#2A2622' : '#E4DED6', href: '#', select: (e) => { e.preventDefault(); this.setState({ fin: i }); } }));
+    }
+    const finishName = p.ext ? (p.finish || 'Standard') : fl[Math.min(fin, fl.length - 1)][0];
+    const specRows = [{ k: 'Maison', v: p.brand + ' · ' + maison.origin }, { k: 'Catégorie', v: p.cat }, p.dims ? { k: 'Dimensions', v: p.dims } : null, { k: 'Référence', v: p.ref }, p.ext ? { k: 'Variantes', v: finishes.length + ' finition' + (finishes.length > 1 ? 's' : '') } : null].filter(Boolean);
+    const panelData = [
+      { title: 'Caractéristiques', rows: specRows },
+      p.tech ? { title: 'Technologies', rows: p.tech.map((t) => ({ k: t, v: 'Technologie TOTO' })) } : null,
+      { title: 'Livraison & installation', rows: [{ k: 'Livraison', v: 'Partout au Maroc, sur rendez-vous' }, { k: 'Installation', v: 'Pose suivie par nos techniciens' }, { k: 'Garantie', v: 'Garantie constructeur' }] }
+    ].filter(Boolean);
+    const panels = panelData.map((d, i) => ({ title: d.title, rowsList: d.rows, rows: i === open ? '1fr' : '0fr', sign: i === open ? '−' : '+', toggle: () => this.setState({ open: open === i ? -1 : i }) }));
+    const pool = M.all();
+    const seenM = new Set([p.model]);
+    const related = [];
+    for (const x of pool) { if (related.length >= 4) break; if (x.brand === p.brand && x.cat === p.cat && !seenM.has(x.model)) { seenM.add(x.model); related.push(x); } }
+    for (const x of pool) { if (related.length >= 4) break; if (x.brand === p.brand && !seenM.has(x.model)) { seenM.add(x.model); related.push(x); } }
+    const desc = (p.desc || '').replace(/\r/g, '').replace(/ \| /g, '\n');
+    return {
+      p, mKey, gallery, finishes, panels, related, qty, finishName,
+      title: p.model || p.name,
+      desc,
+      hasUrl: !!p.url,
+      docs: M.docsFor(p).map((d) => ({ path: d.path, file: d.file, label: d.label, extLabel: d.ext.toUpperCase(), open: () => this.openModal({ kind: 'file', path: d.path, file: d.file, label: d.label }) })),
+      noDocs: M.docsFor(p).length === 0,
+      openOfficial: () => this.openModal({ kind: 'url', url: this.officialUrl(p), label: 'Fiche technique' }),
+      ...this.modalVals(p),
+      spriteOn: !!p.sprite && img === 0,
+      dec: () => this.setState({ qty: Math.max(1, qty - 1) }),
+      inc: () => this.setState({ qty: qty + 1 }),
+      addLabel: added ? 'Ajouté à ma sélection ✓' : 'Ajouter à ma sélection',
+      addBg: added ? '#7D7063' : '#2A2622',
+      add: () => { M.addSel(p.id, qty); this.setState({ added: true }); clearTimeout(this.t); this.t = setTimeout(() => this.setState({ added: false }), 2000); },
+      quote: () => { M.addSel(p.id, qty); location.href = 'MIZU%20Selection.dc.html'; }
+    };
+  }
+}
+</script>
+</body>
+</html>

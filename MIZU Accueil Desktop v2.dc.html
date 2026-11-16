@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+input::placeholder{color:#8C7B6B;}
+</style>
+<script src="mizu-i18n.js"></script>
+</helmet>
+
+<div ref="{{ rootRef }}" style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;font-weight:400;-webkit-font-smoothing:antialiased;">
+
+  <!-- HEADER -->
+  <div data-screen-label="Header" style="position:sticky;top:0;z-index:50;margin-bottom:-76px;">
+    <header style="height:76px;background:{{ headerBg }};color:{{ headerInk }};border-bottom:1px solid {{ headerLine }};transition:background 400ms ease, color 400ms ease, border-color 400ms ease;">
+      <div style="max-width:1440px;height:100%;margin:0 auto;padding:0 48px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;">
+        <div style="display:flex;align-items:center;">
+          <button type="button" aria-label="Ouvrir le menu" onClick="{{ openMenu }}" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;padding:0;color:inherit;cursor:pointer;justify-items:start;" style-hover="opacity:0.6;">
+            <svg width="34" height="18" viewBox="0 0 34 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M0 1h34M0 9h34M0 17h34"></path></svg>
+          </button>
+        </div>
+        <a href="#top" aria-label="MIZU" style="position:relative;display:block;width:110px;height:36px;" style-hover="opacity:0.8;">
+          <img src="img/logos/mizu-white.png" alt="MIZU" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{ logoWhiteOp }};transition:opacity 400ms ease;">
+          <img src="img/logos/mizu-black.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:{{ logoBlackOp }};transition:opacity 400ms ease;">
+        </a>
+        <div style="display:flex;gap:12px;justify-content:flex-end;align-items:center;font-size:13px;font-weight:500;letter-spacing:0.08em;">
+          <span style="display:flex;gap:8px;align-items:center;margin-right:8px;"><span onClick="{{ setFr }}" style="cursor:pointer;opacity:{{ frOp }};">FR</span><span style="opacity:0.4;">/</span><span onClick="{{ setEn }}" style="cursor:pointer;opacity:{{ enOp }};">EN</span></span>
+          <a href="MIZU%20Recherche.dc.html" aria-label="Rechercher" style="width:44px;height:44px;display:grid;place-items:center;color:inherit;" style-hover="opacity:0.6;color:inherit;">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12.5" cy="9.5" r="7"></circle><path d="M7.5 14.5L1.5 20.5"></path></svg>
+          </a>
+          <a href="MIZU%20Selection.dc.html" aria-label="Ma sélection" style="width:44px;height:44px;display:grid;place-items:center;background:none;border:0;padding:0;color:inherit;cursor:pointer;position:relative;" style-hover="opacity:0.6;color:inherit;">
+            <svg width="22" height="24" viewBox="0 0 22 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 7h18l-1.2 16H3.2z"></path><path d="M7 9V5a4 4 0 0 1 8 0v4"></path></svg>
+            <span style="position:absolute;top:4px;right:2px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:#7D7063;color:#FFFFFF;font-size:10px;font-weight:600;letter-spacing:0;display:grid;place-items:center;">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+  </div>
+
+  <!-- MENU LATÉRAL -->
+  <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:80;background:rgba(245,241,236,0.6);opacity:{{ overlayOp }};pointer-events:{{ overlayPE }};transition:opacity 400ms ease;"></div>
+  <aside aria-label="Menu" style="position:fixed;top:0;left:0;bottom:0;z-index:90;width:380px;display:flex;flex-direction:column;background:#FFFFFF;box-shadow:0 0 40px rgba(42,38,34,0.12);transform:translateX({{ drawerX }});transition:transform 500ms cubic-bezier(.2,.7,.2,1);">
+    <div style="position:relative;flex-shrink:0;height:76px;display:grid;place-items:center;border-bottom:1.5px solid #7D7063;">
+      <img src="img/logos/mizu-black.png" alt="MIZU" style="height:30px;width:auto;">
+      <button type="button" aria-label="Fermer le menu" onClick="{{ closeMenu }}" style="position:absolute;top:0;left:100%;width:56px;height:56px;display:grid;place-items:center;border:0;background:#7D7063;color:#FFFFFF;cursor:pointer;" style-hover="background:#2A2622;">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l16 16M18 2L2 18"></path></svg>
+      </button>
+    </div>
+    <nav style="flex:1;min-height:0;display:flex;flex-direction:column;overflow-y:auto;">
+      <button type="button" onClick="{{ toggleMaisons }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;width:100%;background:none;border-left:0;border-right:0;border-top:0;font-family:Jost, sans-serif;cursor:pointer;text-align:left;" style-hover="background:#F5F1EC;">Maisons <span style="font-size:22px;font-weight:300;line-height:1;">{{ maisonsSign }}</span></button>
+      <sc-if value="{{ maisonsOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;padding:8px 0 12px;border-bottom:1px solid #ECE7E0;background:#FAF8F5;">
+          <a href="MIZU%20Maison.dc.html?m=toto" onClick="{{ closeMenu }}" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">TOTO</a>
+          <a href="MIZU%20Maison.dc.html?m=bagnodesign" onClick="{{ closeMenu }}" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">BAGNODESIGN</a>
+          <a href="MIZU%20Maison.dc.html?m=jeeo" onClick="{{ closeMenu }}" style="padding:10px 44px;font-size:14px;color:#5A4E42;" style-hover="color:#2A2622;">JEE-O</a>
+        </div>
+      </sc-if>
+      <a href="MIZU%20Technologie.dc.html" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Technologie TOTO</a>
+      <a href="MIZU%20Catalogue.dc.html" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Catalogue</a>
+      <a href="#pieces" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Nouveautés</a>
+      <a href="MIZU%20Projets.dc.html" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Projets</a>
+      <a href="MIZU%20Showroom.dc.html" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Showroom</a>
+      <a href="MIZU%20Showroom.dc.html" onClick="{{ closeMenu }}" style="display:flex;justify-content:space-between;align-items:center;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;font-weight:500;letter-spacing:0.04em;text-transform:uppercase;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;">Consultation privée</a>
+      <a href="MIZU%20Recherche.dc.html" onClick="{{ closeMenu }}" style="display:flex;align-items:center;gap:12px;min-height:62px;padding:0 28px;border-bottom:1px solid #ECE7E0;font-size:15px;color:#2A2622;" style-hover="background:#F5F1EC;color:#2A2622;"><svg width="16" height="16" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12.5" cy="9.5" r="7"></circle><path d="M7.5 14.5L1.5 20.5"></path></svg>Recherche</a>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:28px;border-bottom:1px solid #ECE7E0;font-size:14px;line-height:1.6;color:#5A4E42;">
+        <span>Showroom : 35, rue 1, Bd de la Mecque, Casablanca</span>
+        <span>Sur rendez-vous uniquement</span>
+        <a href="#whatsapp" style="color:#2A2622;text-decoration:underline;text-underline-offset:3px;" style-hover="color:#7D7063;">Écrire sur WhatsApp</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- HERO -->
+  <section id="top" data-screen-label="Hero" style="position:relative;height:100vh;min-height:760px;overflow:hidden;background:#2A2622;">
+    <sc-for list="{{ slides }}" as="s" hint-placeholder-count="1">
+      <img src="{{ s.src }}" alt="{{ s.alt }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:{{ s.pos }};opacity:{{ s.op }};transition:opacity 900ms ease;">
+    </sc-for>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(42,38,34,0.66) 0%, rgba(42,38,34,0.32) 50%, rgba(42,38,34,0.12) 100%);"></div>
+    <div style="position:absolute;left:0;right:0;bottom:clamp(64px, 11vh, 120px);">
+      <div style="max-width:1440px;margin:0 auto;padding:0 72px;display:flex;justify-content:space-between;align-items:flex-end;color:#FFFFFF;">
+        <div style="max-width:760px;">
+          <p style="margin:0 0 28px;display:flex;align-items:center;gap:20px;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;font-weight:500;"><span style="width:56px;height:1px;background:#FFFFFF;"></span>Wellness design · Casablanca</p>
+          <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:clamp(44px, 6vh, 60px);line-height:1.15;letter-spacing:0.04em;text-transform:uppercase;">L’art de composer<br>l’invisible</h1>
+          <p style="margin:24px 0 40px;max-width:520px;font-size:16px;line-height:1.8;font-weight:300;letter-spacing:0.02em;">Nous composons des expériences de bien-être autour de trois maisons d’exception : TOTO, BAGNODESIGN et JEE-O.</p>
+          <div style="display:flex;gap:14px;align-items:center;">
+            <a href="MIZU%20Showroom.dc.html" data-btn="1" style="display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:16px 28px;border-radius:999px;background:#7D7063;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;transition:transform .25s ease, box-shadow .25s ease;" style-hover="transform:translateY(-2px);box-shadow:0 10px 28px rgba(125,112,99,0.45);color:#FFFFFF;">Réservez votre consultation privée <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></a>
+            <a href="#maisons" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:14.5px 26.5px;border-radius:999px;border:1.5px solid #FFFFFF;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;transition:background-color .25s ease, color .25s ease;" style-hover="background:#FFFFFF;color:#2A2622;"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;"></span>Découvrir les maisons</a>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:20px;">
+          <div style="display:flex;gap:6px;">
+            <sc-for list="{{ slides }}" as="s" hint-placeholder-count="3">
+              <span onClick="{{ s.go }}" style="cursor:pointer;height:2px;width:{{ s.barW }};background:{{ s.barBg }};transition:width 500ms ease, background 500ms ease;"></span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAISONS -->
+  <section id="maisons" data-screen-label="Marques" style="padding:144px 0 152px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <div data-reveal="1" style="display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:56px;text-align:center;">
+        <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Nos maisons</h2>
+        <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;text-wrap:pretty;">Trois maisons d’exception, de la céramique à la douche extérieure.</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;">
+        <a data-reveal="1" href="MIZU%20Maison.dc.html?m=toto" style="display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:#F5F1EC;color:#2A2622;" style-hover="color:#2A2622;">
+          <div style="position:relative;height:500px;overflow:hidden;">
+            <img data-zoom="1" src="img/web/m5.jpg" alt="Salle de bain minérale, baignoire en îlot" style="width:100%;height:100%;object-fit:cover;object-position:center 60%;transition:transform 1400ms cubic-bezier(.2,.7,.2,1);">
+            <span style="position:absolute;top:20px;left:20px;padding:8px 14px;border-radius:999px;background:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:0.08em;">01 · Japon <span style="font-family:'Noto Sans JP', sans-serif;margin-left:4px;">日本</span></span>
+          </div>
+          <div style="padding:32px 32px 36px;display:flex;flex-direction:column;gap:20px;flex:1;">
+            <div style="height:64px;display:flex;align-items:center;"><img src="img/logos/toto-black.svg" alt="TOTO" style="height:32px;width:auto;display:block;"></div>
+            <p style="margin:0;font-size:15px;line-height:2;font-weight:300;color:#5A4E42;">Haute technologie et hygiène absolue. Une salle de bain pensée comme un rituel japonais.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;font-size:14px;">
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Washlet & Neorest</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">WC suspendus</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Vasques</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Robinetterie</span>
+            </div>
+            <span data-arrow-host="1" style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:500;text-decoration:underline;text-underline-offset:4px;color:#7D7063;">Explorer l’univers TOTO <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></span>
+          </div>
+        </a>
+
+        <a data-reveal="1" href="MIZU%20Maison.dc.html?m=bagnodesign" style="display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:#F5F1EC;color:#2A2622;" style-hover="color:#2A2622;">
+          <div style="position:relative;height:500px;overflow:hidden;">
+            <img data-zoom="1" src="img/web/f3.jpg" alt="Robinetterie laiton sur plan en marbre" style="width:100%;height:100%;object-fit:cover;object-position:40% center;transition:transform 1400ms cubic-bezier(.2,.7,.2,1);">
+            <span style="position:absolute;top:20px;left:20px;padding:8px 14px;border-radius:999px;background:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:0.08em;">02 · Royaume-Uni</span>
+          </div>
+          <div style="padding:32px 32px 36px;display:flex;flex-direction:column;gap:20px;flex:1;">
+            <div style="height:64px;display:flex;align-items:center;"><img src="img/logos/bagnodesign-black.svg" alt="BAGNODESIGN" style="height:20px;width:auto;display:block;"></div>
+            <p style="margin:0;font-size:15px;line-height:2;font-weight:300;color:#5A4E42;">Le lifestyle britannique en solutions complètes, accordées aux matières chaudes du Maroc.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;font-size:14px;">
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Vasques</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Robinetterie</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Douches</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Baignoires</span>
+            </div>
+            <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:500;text-decoration:underline;text-underline-offset:4px;color:#7D7063;">Explorer l’univers BAGNODESIGN <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></span>
+          </div>
+        </a>
+
+        <a data-reveal="1" href="MIZU%20Maison.dc.html?m=jeeo" style="display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:#F5F1EC;color:#2A2622;" style-hover="color:#2A2622;">
+          <div style="position:relative;height:500px;overflow:hidden;">
+            <img data-zoom="1" src="img/web/o2.jpg" alt="Douche extérieure en acier dans un jardin" style="width:100%;height:100%;object-fit:cover;object-position:center 30%;transition:transform 1400ms cubic-bezier(.2,.7,.2,1);">
+            <span style="position:absolute;top:20px;left:20px;padding:8px 14px;border-radius:999px;background:#FFFFFF;font-size:12px;font-weight:500;letter-spacing:0.08em;">03 · Pays-Bas</span>
+          </div>
+          <div style="padding:32px 32px 36px;display:flex;flex-direction:column;gap:20px;flex:1;">
+            <div style="height:64px;display:flex;align-items:center;"><img src="img/logos/jeeo-black.svg" alt="JEE-O" style="height:64px;width:auto;display:block;"></div>
+            <p style="margin:0;font-size:15px;line-height:2;font-weight:300;color:#5A4E42;">Un minimalisme sculptural en acier inoxydable, pour le dedans comme pour le jardin.</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:20px;font-size:14px;">
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Douches extérieures</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Colonnes de douche</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Robinetterie inox</span>
+              <span style="padding:12px 0;border-top:1px solid rgba(42,38,34,0.12);">Accessoires</span>
+            </div>
+            <span style="margin-top:auto;display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:500;text-decoration:underline;text-underline-offset:4px;color:#7D7063;">Explorer l’univers JEE-O <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECHNOLOGIE TOTO -->
+  <section id="technologie" data-screen-label="Technologie TOTO" style="position:relative;overflow:hidden;background:#2A2622;height:100vh;min-height:720px;padding:96px 0 48px;box-sizing:border-box;display:flex;align-items:center;">
+    <img src="img/web/m5.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%;">
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(20,18,16,0.78) 0%, rgba(20,18,16,0.55) 55%, rgba(20,18,16,0.35) 100%);"></div>
+    <div style="position:relative;width:100%;max-width:1440px;margin:0 auto;padding:0 72px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;align-items:center;">
+      <div data-reveal="1" style="grid-column:1 / span 5;">
+        <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#E8E2DA;">Technologie TOTO <span style="font-family:'Noto Sans JP', sans-serif;letter-spacing:0.1em;margin-left:8px;">テクノロジー</span></p>
+        <h2 style="margin:0 0 36px;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#FFFFFF;text-wrap:balance;">La précision japonaise au service de l’hygiène absolue.</h2>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <sc-for list="{{ techs }}" as="t" hint-placeholder-count="4">
+            <div onClick="{{ t.select }}" onMouseEnter="{{ t.select }}" style="cursor:pointer;border-radius:16px;padding:22px 24px;background:{{ t.bg }};border:1.5px solid {{ t.line }};transition:background-color .3s ease, border-color .3s ease;">
+              <div style="display:grid;grid-template-columns:44px 1fr auto;align-items:center;">
+                <span style="font-family:'Cormorant Garamond', serif;font-size:20px;color:{{ t.sub }};">{{ t.num }}</span>
+                <span style="font-size:15px;font-weight:500;color:{{ t.ink }};">{{ t.name }}</span>
+                <span style="font-family:'Noto Sans JP', sans-serif;font-size:12px;font-weight:300;color:{{ t.sub }};">{{ t.jp }}</span>
+              </div>
+              <div style="display:grid;grid-template-rows:{{ t.rows }};transition:grid-template-rows 500ms cubic-bezier(.2,.7,.2,1);">
+                <div style="overflow:hidden;">
+                  <p style="margin:0;padding:12px 0 0 44px;font-size:15px;line-height:2;font-weight:300;color:#5A4E42;max-width:440px;">{{ t.desc }}</p>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="grid-column:7 / span 6;">
+        <div style="position:relative;height:min(680px, calc(100vh - 160px));min-height:540px;border-radius:24px;background:#FFFFFF;overflow:hidden;">
+          <sc-for list="{{ techs }}" as="t" hint-placeholder-count="1">
+            <img src="{{ t.img }}" alt="{{ t.product }}" style="position:absolute;inset:96px 64px 140px;width:calc(100% - 128px);height:calc(100% - 236px);object-fit:contain;opacity:{{ t.op }};transform:scale({{ t.scale }});transition:opacity 700ms ease, transform 1200ms cubic-bezier(.2,.7,.2,1);">
+          </sc-for>
+          <span style="position:absolute;left:28px;top:28px;padding:8px 14px;border-radius:999px;background:#F5F1EC;font-family:'Noto Sans JP', sans-serif;font-size:12px;font-weight:300;letter-spacing:0.08em;color:#3A3530;">{{ techJp }}</span>
+          <div style="position:absolute;left:32px;right:32px;bottom:28px;display:flex;justify-content:space-between;align-items:flex-end;padding-top:20px;border-top:1px solid rgba(42,38,34,0.1);">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-family:'Cormorant Garamond', serif;font-size:30px;line-height:1.1;">{{ techProduct }}</span>
+              <span style="font-size:13px;color:#8C7B6B;">{{ techRef }}</span>
+            </div>
+            <a href="MIZU%20Technologie.dc.html" style="display:inline-flex;align-items:center;min-height:44px;padding:8.5px 20.5px;border-radius:999px;border:1.5px solid #2A2622;font-size:15px;font-weight:500;transition:background-color .25s ease, color .25s ease;" style-hover="background:#2A2622;color:#FFFFFF;">Voir la fiche</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIECES CHOISIES -->
+  <section id="pieces" data-screen-label="Produits phares" style="padding:144px 0 160px;">
+    <div style="max-width:1440px;margin:0 auto;padding:0 72px;">
+      <div data-reveal="1" style="display:flex;flex-direction:column;align-items:center;gap:32px;margin-bottom:56px;">
+        <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;text-align:center;">Nouveautés</h2>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4">
+            <button onClick="{{ f.select }}" style="min-height:44px;padding:10px 20px;border-radius:999px;border:1.5px solid {{ f.line }};background:{{ f.bg }};color:{{ f.ink }};font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background-color .25s ease, color .25s ease, border-color .25s ease;" style-hover="border-color:#2A2622;">{{ f.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:24px;row-gap:48px;">
+        <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+          <div style="display:flex;flex-direction:column;">
+            <a href="MIZU%20Produit.dc.html?id={{ p.id }}" style="position:relative;display:block;height:340px;border-radius:16px;background:#F3F1EE;overflow:hidden;transition:background-color .3s ease;" style-hover="background:#ECE7E0;">
+              <img src="{{ p.img }}" alt="{{ p.name }}" style="position:absolute;inset:36px;width:calc(100% - 72px);height:calc(100% - 72px);object-fit:contain;mix-blend-mode:multiply;transform:scale({{ p.zoom }});">
+              <span style="position:absolute;top:14px;right:14px;padding:6px 12px;border-radius:999px;background:#FFFFFF;font-size:11px;font-weight:600;letter-spacing:0.08em;">{{ p.brand }}</span>
+            </a>
+            <h3 style="margin:20px 0 6px;font-size:18px;font-weight:600;line-height:1.3;">{{ p.name }}</h3>
+            <div style="display:flex;justify-content:space-between;gap:12px;font-size:13px;line-height:1.5;color:#6B6258;">
+              <span>{{ p.cat }}</span>
+              <span style="color:#8C7B6B;white-space:nowrap;">{{ p.ref }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px;">
+              <a href="MIZU%20Produit.dc.html?id={{ p.id }}" style="display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:999px;border:1.5px solid #B8986A;font-size:14px;font-weight:500;transition:border-color .25s ease;" style-hover="border-color:#2A2622;color:#2A2622;">Fiche</a>
+              <a href="MIZU%20Selection.dc.html" style="display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:14px;font-weight:500;transition:background-color .25s ease;" style-hover="background:#7D7063;color:#FFFFFF;">Devis</a>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:64px;">
+        <a href="MIZU%20Catalogue.dc.html" data-btn="1" style="display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:14.5px 26.5px;border-radius:999px;border:1.5px solid #2A2622;font-size:16px;font-weight:500;white-space:nowrap;transition:background-color .25s ease, color .25s ease;" style-hover="background:#2A2622;color:#FFFFFF;">Toute la sélection <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></a>
+      </div>
+
+      <!-- Pièce maîtresse -->
+      <div data-reveal="1" style="margin-top:160px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);border-radius:24px;overflow:hidden;background:#F3F1EE;">
+        <div style="order:2;position:relative;min-height:560px;background:#FFFFFF;">
+          <img src="img/toto/PJYD2200PWEE_GW.jpg" alt="TOTO baignoire à flottaison ZERO DIMENSION" style="position:absolute;inset:56px;width:calc(100% - 112px);height:calc(100% - 112px);object-fit:contain;">
+        </div>
+        <div style="order:1;padding:72px 64px;display:flex;flex-direction:column;justify-content:center;">
+          <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#8C7B6B;">TOTO · Pièce maîtresse</p>
+          <h3 style="margin:0 0 20px;font-family:Jost, sans-serif;font-weight:500;font-size:32px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;text-wrap:balance;">Baignoire à flottaison ZERO DIMENSION</h3>
+          <p style="margin:0 0 32px;max-width:460px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;text-wrap:pretty;">Une position allongée en apesanteur, un appuie-tête réglable à effet cascade, et la fonction massante HYDROHANDS.</p>
+          <div style="display:flex;gap:24px;align-items:center;">
+            <a href="MIZU%20Selection.dc.html" data-btn="1" style="display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:16px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;transition:background-color .25s ease;" style-hover="background:#7D7063;color:#FFFFFF;">Demander un devis <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></a>
+            <span style="display:flex;flex-direction:column;gap:2px;padding-left:24px;border-left:1px solid #D9D1C7;font-size:13px;line-height:1.5;letter-spacing:0.04em;color:#8C7B6B;"><span>2200 × 1050 × 785 mm</span><span>Réf. PJYD2200PWEE</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANDEAU D'APPEL -->
+  <section id="consultation" data-screen-label="Bandeau d'appel" style="background:#F5F1EC;">
+    <div style="max-width:1440px;margin:0 auto;padding:128px 72px;">
+      <div data-reveal="1" style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;">
+        <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:36px;line-height:1.2;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;text-wrap:balance;">Votre projet mérite une écoute privée</h2>
+        <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;text-wrap:pretty;">Au showroom de Casablanca ou sur votre chantier, nous composons avec vous chaque détail, du choix des pièces à leur installation.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:24px;">
+          <a href="MIZU%20Showroom.dc.html" data-btn="1" style="display:inline-flex;align-items:center;gap:12px;min-height:48px;padding:16px 28px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;transition:background-color .25s ease;" style-hover="background:#7D7063;color:#FFFFFF;">Réservez votre consultation privée <span data-arrow="1" style="display:inline-block;transition:transform .25s ease;">→</span></a>
+          <a href="#whatsapp" style="display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:14.5px 26.5px;border-radius:999px;border:1.5px solid #2A2622;color:#2A2622;font-size:16px;line-height:20px;font-weight:500;white-space:nowrap;transition:background-color .25s ease, color .25s ease;" style-hover="background:#2A2622;color:#FFFFFF;">Écrire sur WhatsApp</a>
+        </div>
+        <span style="margin-top:20px;font-size:13px;letter-spacing:0.08em;color:#8C7B6B;">Showroom sur rendez-vous · Casablanca</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="showroom" data-screen-label="Footer">
+    <div style="background:#7D7063;">
+      <div style="max-width:1440px;height:56px;margin:0 auto;padding:0 72px;display:flex;justify-content:space-around;align-items:center;">
+        <a href="MIZU%20Showroom.dc.html" style="display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#FFFFFF;" style-hover="color:#FFFFFF;opacity:0.75;"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="4" width="18" height="20" rx="1"></rect><path d="M9 24V9h10v15"></path></svg>Showroom sur rendez-vous</a>
+        <span style="width:1px;height:28px;background:rgba(255,255,255,0.35);"></span>
+        <a href="#pro" style="display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#FFFFFF;" style-hover="color:#FFFFFF;opacity:0.75;"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 22L22 4l2 2L6 24z"></path><path d="M9 17l2 2M12 14l2 2M15 11l2 2M18 8l2 2"></path></svg>Accompagnement technique</a>
+        <span style="width:1px;height:28px;background:rgba(255,255,255,0.35);"></span>
+        <a href="MIZU%20Technologie.dc.html" style="display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#FFFFFF;" style-hover="color:#FFFFFF;opacity:0.75;"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 4c4 5 7 8.5 7 12a7 7 0 0 1-14 0c0-3.5 3-7 7-12z"></path></svg>Installation suivie</a>
+        <span style="width:1px;height:28px;background:rgba(255,255,255,0.35);"></span>
+        <a href="#whatsapp" style="display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#FFFFFF;" style-hover="color:#FFFFFF;opacity:0.75;"><svg width="20" height="20" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 13l1-3.4A9 9 0 1 1 9.2 22.4z" stroke-linejoin="round"></path></svg>Contact</a>
+      </div>
+    </div>
+
+    <div style="background:#F5F1EC;color:#2A2622;">
+      <div style="max-width:1440px;margin:0 auto;padding:48px 72px 56px;display:grid;grid-template-columns:200px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.5fr);column-gap:40px;align-items:start;">
+        <a href="#top" style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;color:#7D7063;" style-hover="color:#7D7063;">
+          <img src="img/logos/mizu-black.png" alt="MIZU" style="width:150px;height:auto;">
+        </a>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:15px;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">Maisons</span>
+          <a href="MIZU%20Maison.dc.html?m=toto" style-hover="color:#7D7063;">TOTO</a>
+          <a href="MIZU%20Maison.dc.html?m=bagnodesign" style-hover="color:#7D7063;">BAGNODESIGN</a>
+          <a href="MIZU%20Maison.dc.html?m=jeeo" style-hover="color:#7D7063;">JEE-O</a>
+          <a href="MIZU%20Technologie.dc.html" style-hover="color:#7D7063;">Technologie TOTO</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:15px;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">MIZU</span>
+          <a href="MIZU%20Projets.dc.html" style-hover="color:#7D7063;">Projets</a>
+          <a href="#lookbook" style-hover="color:#7D7063;">Lookbook 2026</a>
+          <a href="MIZU%20Selection.dc.html" style-hover="color:#7D7063;">Demander un devis</a>
+          <a href="#pro" style-hover="color:#7D7063;">Espace professionnels</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;font-size:15px;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">Aide</span>
+          <a href="MIZU%20Contact.dc.html" style-hover="color:#7D7063;">Contactez-nous</a>
+          <a href="MIZU%20Showroom.dc.html" style-hover="color:#7D7063;">Consultation privée</a>
+          <a href="#mentions" style-hover="color:#7D7063;">Mentions légales</a>
+          <a href="#confidentialite" style-hover="color:#7D7063;">Confidentialité</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">Showroom</span>
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;">MIZU — Casablanca</span>
+          <span style="font-size:14px;line-height:1.6;color:#6E6257;">35, rue 1, Bd de la Mecque, Casablanca<br>Sur rendez-vous uniquement</span>
+          <a href="#whatsapp" style="font-size:14px;color:#7D7063;text-decoration:underline;text-underline-offset:3px;" style-hover="color:#2A2622;">Écrire sur WhatsApp</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <span style="font-size:14px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#2A2622;margin-bottom:10px;">Newsletter</span>
+          <p style="margin:0;font-size:15px;line-height:1.55;color:#6E6257;">Recevez le Lookbook 2026 et nos nouvelles sélections.</p>
+          <div style="display:flex;height:52px;margin-top:6px;">
+            <input type="email" placeholder="Votre adresse e-mail" style="flex:1;min-width:0;height:100%;padding:0 16px;background:#FFFFFF;border:1px solid #D9D1C7;border-right:0;outline:none;color:#2A2622;font-family:Jost, sans-serif;font-size:14px;">
+            <button type="button" style="height:100%;padding:0 24px;border:0;background:#7D7063;color:#FFFFFF;font-family:Jost, sans-serif;font-size:13px;font-weight:600;letter-spacing:0.16em;cursor:pointer;" style-hover="background:#2A2622;">OK</button>
+          </div>
+          <span style="margin-top:18px;font-size:15px;font-weight:600;">Suivez-nous</span>
+          <div style="display:flex;gap:10px;">
+            <a href="#instagram" aria-label="Instagram" style="width:44px;height:44px;border-radius:50%;background:#2A2622;display:grid;place-items:center;color:#FFFFFF;" style-hover="background:#7D7063;color:#FFFFFF;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="2" y="2" width="12" height="12" rx="3.5"></rect><circle cx="8" cy="8" r="2.8"></circle><circle cx="11.6" cy="4.4" r="0.5" fill="currentColor"></circle></svg></a>
+            <a href="#linkedin" aria-label="LinkedIn" style="width:44px;height:44px;border-radius:50%;background:#2A2622;display:grid;place-items:center;color:#FFFFFF;font-size:13px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">in</a>
+            <a href="#facebook" aria-label="Facebook" style="width:44px;height:44px;border-radius:50%;background:#2A2622;display:grid;place-items:center;color:#FFFFFF;font-size:14px;font-weight:500;" style-hover="background:#7D7063;color:#FFFFFF;">f</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#FFFFFF;border-top:1px solid #E8E2DA;">
+      <div style="max-width:1440px;height:84px;margin:0 auto;padding:0 72px;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#6E6257;">
+        <span>MIZU MAROC 2026 &nbsp;|&nbsp; Conception et Réalisation <strong style="font-family:'Cormorant Garamond', serif;font-size:16px;font-weight:600;color:#3A3530;letter-spacing:0.04em;">DOFACTORY</strong></span>
+        <div style="display:flex;gap:28px;">
+          <a href="#mentions" style-hover="color:#7D7063;">Mentions légales</a>
+          <a href="#confidentialite" style-hover="color:#7D7063;">Politique de confidentialité</a>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span onClick="{{ setFr }}" style="cursor:pointer;color:{{ frInk }};">FR</span>
+          <span style="opacity:0.4;">/</span>
+          <span onClick="{{ setEn }}" style="cursor:pointer;color:{{ enInk }};">EN</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <sc-if value="{{ showWhatsApp }}" hint-placeholder-val="{{ true }}">
+    <a href="#whatsapp" aria-label="WhatsApp" style="position:fixed;right:28px;bottom:28px;z-index:60;display:flex;align-items:center;gap:10px;min-height:52px;padding:10px 22px 10px 12px;border-radius:999px;background:#7D7063;color:#FFFFFF;font-size:15px;font-weight:500;box-shadow:0 10px 28px rgba(42,38,34,0.22);transition:transform .25s ease;" style-hover="transform:translateY(-2px);color:#FFFFFF;">
+      <span style="width:32px;height:32px;border-radius:50%;background:#FFFFFF;display:grid;place-items:center;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#7D7063" stroke-width="1.5"><path d="M3 13l.8-2.6A5.5 5.5 0 1 1 6 12.6z" stroke-linejoin="round"></path></svg>
+      </span>
+      WhatsApp
+    </a>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;headerMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;verre&quot;,&quot;transparent&quot;],&quot;default&quot;:&quot;transparent&quot;,&quot;tsType&quot;:&quot;'verre'|'transparent'&quot;,&quot;section&quot;:&quot;Header&quot;},&quot;heroAutoplay&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;showWhatsApp&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Contact&quot;}}">
+class Component extends DCLogic {
+  state = { tech: 0, scrolled: false, lang: (window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr'), slide: 0, brand: 'Tout', menu: false, maisons: false };
+  rootRef = React.createRef();
+
+  componentDidMount() {
+    this.onScroll = () => {
+      const s = window.scrollY > 40;
+      if (s !== this.state.scrolled) this.setState({ scrolled: s });
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.onLang = () => this.setState({ lang: window.MIZU_LANG ? window.MIZU_LANG.get() : 'fr' });
+    window.addEventListener('mizu-lang', this.onLang);
+    this.onLang();
+    this.onScroll();
+    this.startAuto();
+    const root = this.rootRef.current;
+    if (!root) return;
+    root.querySelectorAll('[data-arrow]').forEach((ar) => {
+      const host = ar.closest('a');
+      if (!host) return;
+      host.addEventListener('mouseenter', () => { ar.style.transform = 'translateX(4px)'; });
+      host.addEventListener('mouseleave', () => { ar.style.transform = ''; });
+    });
+    root.querySelectorAll('[data-zoom]').forEach((img) => {
+      const host = img.closest('a') || img.parentElement;
+      host.addEventListener('mouseenter', () => { img.style.transform = 'scale(1.04)'; });
+      host.addEventListener('mouseleave', () => { img.style.transform = ''; });
+    });
+    if (!('IntersectionObserver' in window)) return;
+    this.io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          this.io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    root.querySelectorAll('[data-reveal]').forEach((el) => {
+      if (el.getBoundingClientRect().top < window.innerHeight) return;
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(28px)';
+      el.style.transition = 'opacity 900ms ease, transform 1100ms cubic-bezier(.2,.7,.2,1)';
+      this.io.observe(el);
+    });
+  }
+
+  componentDidUpdate(prev) {
+    const was = prev && prev.heroAutoplay !== undefined ? prev.heroAutoplay : true;
+    const now = this.props.heroAutoplay ?? true;
+    if (was !== now) this.startAuto();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+    clearInterval(this.timer);
+    clearInterval(this.techTimer);
+    if (this.io) this.io.disconnect();
+  }
+
+  startTech() {
+    clearInterval(this.techTimer);
+    this.techTimer = setInterval(() => this.setState((s) => ({ tech: (s.tech + 1) % 4 })), 3000);
+  }
+
+  startAuto() {
+    if (!this.techTimer) this.startTech();
+    clearInterval(this.timer);
+    if (!(this.props.heroAutoplay ?? true)) return;
+    this.timer = setInterval(() => this.setState((s) => ({ slide: (s.slide + 1) % 3 })), 2000);
+  }
+
+  goTo(i) {
+    this.setState({ slide: (i + 3) % 3 });
+    this.startAuto();
+  }
+
+  renderVals() {
+    const { tech, scrolled, lang, slide, brand } = this.state;
+    const glass = (this.props.headerMode ?? 'transparent') === 'verre' || scrolled;
+
+    const slideData = [
+      { src: 'img/web/u2.jpg', alt: 'Vasque noire sur mur en pierre', pos: 'center 62%' },
+      { src: 'img/web/f2.jpg', alt: 'Vasque en bronze et eau courante', pos: 'center 55%' },
+      { src: 'img/web/m4.jpg', alt: 'Baignoire noire face au jardin', pos: 'center 72%' }
+    ];
+    const slides = slideData.map((s, i) => ({
+      ...s,
+      op: i === slide ? 1 : 0,
+      scale: i === slide ? 1.06 : 1,
+      barW: i === slide ? '40px' : '16px',
+      barBg: i === slide ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+      go: () => this.goTo(i)
+    }));
+
+    const data = [
+      { name: 'Washlet', jp: 'ウォシュレット', desc: 'Douche à eau chaude, siège chauffant à température réglable et séchage doux. L’hygiène par l’eau, réglée au degré près.', img: 'img/toto/TCF95580GEU_MBL.jpg', product: 'NEOREST® WX1', ref: 'TCF95580GEU · Noir mat' },
+      { name: 'Tornado Flush', jp: 'トルネード洗浄', desc: 'Une chasse d’eau tourbillonnaire, extrêmement efficace et silencieuse, sans éclaboussures. 4,5 litres par chasse, sans rebord.', img: 'img/toto/CW552RY_MBL.jpg', product: 'WC RP suspendu', ref: 'CW552RY · Noir mat' },
+      { name: 'CeFiONtect', jp: 'セフィオンテクト', desc: 'Un vernis céramique ultra-lisse qui empêche la saleté de se déposer. La surface reste propre plus longtemps.', img: 'img/toto/LW1535Y.jpg', product: 'Vasque sous plan WU', ref: 'LW1535Y · Blanc' },
+      { name: 'Ewater+', jp: 'きれい除菌水', desc: 'Une eau électrolysée qui nettoie la douchette et la cuvette après chaque utilisation, sans produit chimique.', img: 'img/toto/TCF801EG_NW1.jpg', product: 'WASHLET® RW', ref: 'TCF801EG · Blanc / argent' }
+    ];
+    const techs = data.map((d, i) => ({
+      ...d,
+      num: '0' + (i + 1),
+      ink: i === tech ? '#2A2622' : '#FFFFFF',
+      sub: i === tech ? '#8C7B6B' : '#E8E2DA',
+      bg: i === tech ? '#FFFFFF' : 'rgba(255,255,255,0.06)',
+      line: i === tech ? '#FFFFFF' : 'rgba(255,255,255,0.28)',
+      rows: i === tech ? '1fr' : '0fr',
+      op: i === tech ? 1 : 0,
+      scale: i === tech ? 1 : 0.97,
+      select: () => { if (this.state.tech !== i) this.setState({ tech: i }); this.startTech(); }
+    }));
+
+    const all = [
+      { id: 'neorest', brand: 'TOTO', name: 'NEOREST® WX1', cat: 'WC lavant', ref: 'TCF95580GEU', img: 'img/toto/TCF95580GEU_MBL.jpg', zoom: 1 },
+      { id: 'mit', brand: 'BAGNODESIGN', name: 'Mitigeur lavabo', cat: 'Bronze satiné', ref: 'AQE-ECO-I302', img: 'img/bagno/AQE-ECO-I302-A-SBZ.jpg', zoom: 1 },
+      { id: 'd01', brand: 'JEE-O', name: 'Original douche 01', cat: 'Inox brossé', ref: '100-6100', img: 'img/jeeo/100-6100.jpg', zoom: 1.1 },
+      { id: 'zn', brand: 'TOTO', name: 'Robinet automatique ZN', cat: 'Sans contact', ref: 'TLP01701G', img: 'img/toto/TLP01701G_MBL.jpg', zoom: 1 },
+      { id: 'dch', brand: 'BAGNODESIGN', name: 'Douchette à main', cat: 'Finition bronze', ref: 'BDD-BCH-535', img: 'img/bagno/BDD-BCH-535-TF-C.jpg', zoom: 1 },
+      { id: 'wcrp', brand: 'TOTO', name: 'WC RP suspendu', cat: 'Tornado Flush', ref: 'CW552RY', img: 'img/toto/CW552RY_MBL.jpg', zoom: 1 },
+      { id: 'mur', brand: 'JEE-O', name: 'Mitigeur lavabo mural', cat: 'Inox brossé', ref: '400-1510', img: 'img/jeeo/400-1510.jpg', zoom: 2.2 },
+      { id: 'bai', brand: 'BAGNODESIGN', name: 'Baignoire en îlot', cat: 'Finition marbre', ref: 'BDB-TUS-875', img: 'img/bagno/BDB-TUS-875-AV.jpg', zoom: 1 },
+      { id: 'rw', brand: 'TOTO', name: 'WASHLET® RW', cat: 'Abattant lavant', ref: 'TCF801EG', img: 'img/toto/TCF801EG_NW1.jpg', zoom: 1 },
+      { id: 'vas', brand: 'BAGNODESIGN', name: 'Vasque à encastrer', cat: 'Céramique blanche', ref: 'AQS-ENV-713', img: 'img/bagno/AQS-ENV-713-WH.jpg', zoom: 1 },
+      { id: 'bec', brand: 'JEE-O', name: 'Bec mural', cat: 'Inox brossé', ref: '300-1500', img: 'img/jeeo/300-1500.jpg', zoom: 2.2 },
+      { id: 'bon', brand: 'JEE-O', name: 'Bonde de vasque', cat: 'Inox brossé', ref: '001-0010', img: 'img/jeeo/001-0010.jpg', zoom: 2.4 }
+    ];
+    const products = brand === 'Tout' ? all.slice(0, 8) : all.filter((p) => p.brand === brand);
+    const filters = ['Tout', 'TOTO', 'BAGNODESIGN', 'JEE-O'].map((label) => ({
+      label,
+      bg: label === brand ? '#2A2622' : '#FFFFFF',
+      ink: label === brand ? '#FFFFFF' : '#2A2622',
+      line: label === brand ? '#2A2622' : '#E4DED6',
+      select: () => this.setState({ brand: label })
+    }));
+
+    return {
+      rootRef: this.rootRef,
+      topBg: glass ? '#2A2622' : 'rgba(42,38,34,0)',
+      headerBg: glass ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0)',
+      headerInk: glass ? '#2A2622' : '#FFFFFF',
+      headerLine: glass ? 'rgba(42,38,34,0.08)' : 'rgba(255,255,255,0.2)',
+      logoWhiteOp: glass ? 0 : 1,
+      logoBlackOp: glass ? 1 : 0,
+      btnBg: '#7D7063',
+      btnInk: '#FFFFFF',
+      slides,
+      slideNum: '0' + (slide + 1),
+      prev: () => this.goTo(slide - 1),
+      next: () => this.goTo(slide + 1),
+      techs,
+      techJp: data[tech].jp,
+      techProduct: data[tech].product,
+      techRef: data[tech].ref,
+      filters,
+      products,
+      showWhatsApp: this.props.showWhatsApp ?? true,
+      frOp: lang === 'fr' ? 1 : 0.55,
+      enOp: lang === 'en' ? 1 : 0.55,
+      frInk: lang === 'fr' ? '#2A2622' : '#8C7B6B',
+      enInk: lang === 'en' ? '#2A2622' : '#8C7B6B',
+      drawerX: this.state.menu ? '0' : 'calc(-100% - 60px)',
+      overlayOp: this.state.menu ? 1 : 0,
+      overlayPE: this.state.menu ? 'auto' : 'none',
+      openMenu: () => this.setState({ menu: true }),
+      closeMenu: () => this.setState({ menu: false }),
+      maisonsOpen: this.state.maisons,
+      maisonsSign: this.state.maisons ? '−' : '+',
+      toggleMaisons: () => this.setState((s) => ({ maisons: !s.maisons })),
+      setFr: () => window.MIZU_LANG && window.MIZU_LANG.set('fr'),
+      setEn: () => window.MIZU_LANG && window.MIZU_LANG.set('en')
+    };
+  }
+}
+</script>
+</body>
+</html>

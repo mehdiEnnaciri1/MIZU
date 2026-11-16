@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400&display=swap">
+<style>
+html,body{margin:0;padding:0;background:#FFFFFF;}
+*{box-sizing:border-box;}
+a{color:inherit;text-decoration:none;}
+a:hover{color:#8C7B6B;}
+input::placeholder,textarea::placeholder{color:#8C7B6B;}
+</style>
+<script src="mizu-data.js"></script>
+<script src="mizu-i18n.js"></script>
+</helmet>
+<div style="width:100%;min-width:1440px;background:#FFFFFF;color:#2A2622;font-family:Jost, sans-serif;-webkit-font-smoothing:antialiased;">
+  <dc-import name="MIZU-Header" variant="hero" hint-size="100%,0px"></dc-import>
+
+  <section data-screen-label="Hero Showroom" style="position:relative;height:72vh;min-height:560px;overflow:hidden;background:#2A2622;">
+    <img src="img/amb/f5.jpg" alt="Showroom MIZU Casablanca" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+    <div style="position:absolute;inset:0;background:rgba(20,18,16,0.45);"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding-top:76px;color:#FFFFFF;text-align:center;">
+      <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:48px;letter-spacing:0.06em;text-transform:uppercase;">Showroom &amp; rendez-vous</h1>
+      <span style="font-size:13px;letter-spacing:0.12em;text-transform:uppercase;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style="color:#FFFFFF;" style-hover="opacity:0.7;color:#FFFFFF;">Accueil</a> &nbsp;›&nbsp; Showroom</span>
+    </div>
+  </section>
+
+  <section data-screen-label="Adresse" style="padding:120px 0 96px;">
+    <div style="max-width:1100px;margin:0 auto;padding:0 72px;display:flex;flex-direction:column;align-items:center;text-align:center;">
+      <p style="margin:0 0 16px;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;color:#8C7B6B;">Adresse</p>
+      <h2 style="margin:0 0 28px;font-family:Jost, sans-serif;font-weight:500;font-size:32px;line-height:1.3;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">35, rue 1, Bd de la Mecque<br>Casablanca</h2>
+      <a href="#itineraire" style="display:inline-flex;align-items:center;min-height:44px;padding:10px 24px;border-radius:999px;background:#2A2622;color:#FFFFFF;font-size:14px;font-weight:500;letter-spacing:0.06em;" style-hover="background:#7D7063;color:#FFFFFF;">Itinéraire</a>
+      <div style="width:100%;margin-top:72px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid #ECE7E0;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px 24px 8px;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#7D7063" stroke-width="1.4"><rect x="4" y="6" width="20" height="18" rx="1"></rect><path d="M4 11h20M9 3v5M19 3v5"></path></svg>
+          <span style="font-size:18px;font-weight:500;">Sur rendez-vous</span>
+          <span style="font-size:14px;line-height:1.6;color:#5A4E42;">Un conseiller vous reçoit seul,<br>pour le temps nécessaire.</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px 24px 8px;border-left:1px solid #ECE7E0;border-right:1px solid #ECE7E0;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#7D7063" stroke-width="1.4"><path d="M5 13l1-3.4A9 9 0 1 1 9.2 22.4z" stroke-linejoin="round"></path></svg>
+          <span style="font-size:18px;font-weight:500;">WhatsApp</span>
+          <span style="font-size:14px;line-height:1.6;color:#5A4E42;">Une question avant votre visite ?</span>
+          <a href="#whatsapp" style="font-size:14px;color:#7D7063;text-decoration:underline;text-underline-offset:3px;" style-hover="color:#2A2622;">Écrire sur WhatsApp</a>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px 24px 8px;">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#7D7063" stroke-width="1.4"><path d="M4 13L14 5l10 8v11H4z"></path><path d="M11 24v-7h6v7"></path></svg>
+          <span style="font-size:18px;font-weight:500;">Sur votre chantier</span>
+          <span style="font-size:14px;line-height:1.6;color:#5A4E42;">Nous venons relever les contraintes<br>techniques sur place.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-screen-label="Prise de rendez-vous" style="background:linear-gradient(#FFFFFF 0, #FFFFFF 240px, #F5F1EC 240px);padding:0 0 144px;">
+    <div style="max-width:1100px;margin:0 auto;padding:0 72px;">
+      <div style="background:#FFFFFF;border-radius:24px;box-shadow:0 20px 60px rgba(42,38,34,0.08);padding:64px 72px;">
+        <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:48px;">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;">
+              <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:32px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Réserver votre consultation privée</h2>
+              <p style="margin:0;font-size:15px;color:#5A4E42;">Confirmation par téléphone ou WhatsApp sous 24 h.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;"><span style="color:#B8986A;margin-right:10px;">01</span>Type de rendez-vous</span>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+                <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ k.select }}" style="display:flex;flex-direction:column;gap:6px;padding:20px 22px;border-radius:16px;border:1.5px solid {{ k.line }};background:{{ k.bg }};font-family:Jost, sans-serif;color:#2A2622;text-align:left;cursor:pointer;" style-hover="border-color:#2A2622;">
+                    <span style="font-size:16px;font-weight:500;">{{ k.label }}</span>
+                    <span style="font-size:13px;color:#5A4E42;">{{ k.sub }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;"><span style="color:#B8986A;margin-right:10px;">02</span>Date</span>
+              <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;">
+                <sc-for list="{{ days }}" as="d" hint-placeholder-count="8">
+                  <button type="button" onClick="{{ d.select }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 0;border-radius:14px;border:1.5px solid {{ d.line }};background:{{ d.bg }};color:{{ d.ink }};font-family:Jost, sans-serif;cursor:pointer;" style-hover="border-color:#2A2622;">
+                    <span style="font-size:12px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.8;">{{ d.wd }}</span>
+                    <span style="font-size:22px;font-weight:500;">{{ d.n }}</span>
+                    <span style="font-size:12px;opacity:0.8;">{{ d.mo }}</span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;"><span style="color:#B8986A;margin-right:10px;">03</span>Créneau</span>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <sc-for list="{{ slots }}" as="s" hint-placeholder-count="6">
+                  <button type="button" onClick="{{ s.select }}" style="min-height:44px;padding:10px 22px;border-radius:999px;border:1.5px solid {{ s.line }};background:{{ s.bg }};color:{{ s.ink }};font-family:Jost, sans-serif;font-size:14px;font-weight:500;cursor:pointer;" style-hover="border-color:#2A2622;">{{ s.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <span style="font-size:13px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;"><span style="color:#B8986A;margin-right:10px;">04</span>Vos coordonnées</span>
+              <div style="display:grid;grid-template-columns:1fr 1fr;column-gap:32px;row-gap:8px;">
+                <input type="text" placeholder="Nom et prénom" value="{{ name }}" onChange="{{ setName }}" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="tel" placeholder="Téléphone" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="email" placeholder="E-mail" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <input type="text" placeholder="Ville du projet" style="height:56px;padding:0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;">
+                <textarea placeholder="Votre projet en quelques mots" rows="3" style="grid-column:1 / -1;margin-top:8px;padding:14px 0;border:0;border-bottom:1px solid #D9D1C7;outline:none;background:transparent;resize:vertical;font-family:Jost, sans-serif;font-size:15px;color:#2A2622;"></textarea>
+              </div>
+              <div style="display:flex;gap:10px;align-items:center;margin-top:8px;">
+                <span style="font-size:14px;color:#5A4E42;margin-right:6px;">Maisons qui vous intéressent</span>
+                <sc-for list="{{ brands }}" as="b" hint-placeholder-count="3">
+                  <button type="button" onClick="{{ b.toggle }}" style="min-height:40px;padding:8px 18px;border-radius:999px;border:1.5px solid {{ b.line }};background:{{ b.bg }};color:{{ b.ink }};font-family:Jost, sans-serif;font-size:13px;font-weight:500;letter-spacing:0.06em;cursor:pointer;">{{ b.label }}</button>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:32px;border-top:1px solid #ECE7E0;">
+              <span style="font-size:15px;color:#5A4E42;">{{ summary }}</span>
+              <button type="button" onClick="{{ submit }}" style="display:inline-flex;align-items:center;gap:12px;min-height:52px;padding:16px 32px;border-radius:999px;border:0;background:{{ submitBg }};color:#FFFFFF;font-family:Jost, sans-serif;font-size:16px;font-weight:500;cursor:{{ submitCursor }};" style-hover="background:#7D7063;">Confirmer le rendez-vous →</button>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:48px 0;text-align:center;">
+            <span style="width:64px;height:64px;border-radius:50%;background:#F5F1EC;display:grid;place-items:center;"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7D7063" stroke-width="1.6"><path d="M5 13.5l5 5L21 7.5"></path></svg></span>
+            <h2 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:32px;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Demande envoyée</h2>
+            <p style="margin:0;max-width:480px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">{{ summary }}. Un conseiller MIZU vous contacte sous 24 h pour confirmer.</p>
+            <button type="button" onClick="{{ restart }}" style="margin-top:12px;min-height:48px;padding:14px 26px;border-radius:999px;border:1.5px solid #2A2622;background:#FFFFFF;font-family:Jost, sans-serif;font-size:15px;font-weight:500;color:#2A2622;cursor:pointer;" style-hover="background:#2A2622;color:#FFFFFF;">Modifier ma demande</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { kind: 0, day: -1, slot: -1, brands: [], done: false, name: '' };
+  renderVals() {
+    const { kind, day, slot, brands, done } = this.state;
+    const kindsD = [['Au showroom', 'Casablanca · 1 h'], ['Sur votre chantier', 'Relevé technique'], ['En visio', '30 min · à distance']];
+    const kinds = kindsD.map((k, i) => ({ label: k[0], sub: k[1], line: i === kind ? '#2A2622' : '#E4DED6', bg: i === kind ? '#F5F1EC' : '#FFFFFF', select: () => this.setState({ kind: i }) }));
+    const wd = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const mo = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+    const list = [];
+    const d0 = new Date();
+    for (let i = 1; list.length < 8; i++) {
+      const d = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate() + i);
+      if (d.getDay() !== 0) list.push(d);
+    }
+    const days = list.map((d, i) => ({ wd: wd[d.getDay()], n: d.getDate(), mo: mo[d.getMonth()], on: i === day, line: i === day ? '#2A2622' : '#E4DED6', bg: i === day ? '#2A2622' : '#FFFFFF', ink: i === day ? '#FFFFFF' : '#2A2622', select: () => this.setState({ day: i }) }));
+    const slotsD = ['10:00', '11:30', '14:00', '15:30', '17:00', '18:30'];
+    const slots = slotsD.map((label, i) => ({ label, line: i === slot ? '#2A2622' : '#E4DED6', bg: i === slot ? '#2A2622' : '#FFFFFF', ink: i === slot ? '#FFFFFF' : '#2A2622', select: () => this.setState({ slot: i }) }));
+    const bl = ['TOTO', 'BAGNODESIGN', 'JEE-O'].map((label) => {
+      const on = brands.includes(label);
+      return { label, line: on ? '#2A2622' : '#E4DED6', bg: on ? '#2A2622' : '#FFFFFF', ink: on ? '#FFFFFF' : '#2A2622', toggle: () => this.setState({ brands: on ? brands.filter((b) => b !== label) : [...brands, label] }) };
+    });
+    const ready = day >= 0 && slot >= 0;
+    const summary = ready ? kindsD[kind][0] + ' · ' + days[day].wd + ' ' + days[day].n + ' ' + days[day].mo + ' à ' + slotsD[slot] : 'Choisissez une date et un créneau';
+    return {
+      kinds, days, slots, brands: bl, summary,
+      name: this.state.name,
+      setName: (e) => this.setState({ name: e.target.value }),
+      notDone: !done, done,
+      submitBg: ready ? '#2A2622' : '#B5ACA2',
+      submitCursor: ready ? 'pointer' : 'not-allowed',
+      submit: () => { if (ready) { this.setState({ done: true }); window.scrollTo({ top: 600, behavior: 'smooth' }); } },
+      restart: () => this.setState({ done: false })
+    };
+  }
+}
+</script>
+</body>
+</html>
