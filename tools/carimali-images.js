@@ -14,6 +14,6 @@ const slug = u => path.basename(u.split('?')[0]).replace(/\.[^.]+$/, '').replace
       bytes += fs.statSync(p).size; map[u] = 'img/carimali/' + f;
     } catch (e) { fail.push([u, e.message]); } } };
   await Promise.all(Array.from({ length: 8 }, work));
-  fs.writeFileSync(path.join(__dirname, '_tr/imgmap.json'), JSON.stringify(map));
+  fs.writeFileSync(path.join(__dirname, '../data/carimali-imgmap.json'), JSON.stringify(map));
   console.log('urls', urls.length, 'ok', Object.keys(map).length, 'fail', fail.length, 'MB', (bytes / 1e6).toFixed(1)); console.log(fail.slice(0, 10));
 })();

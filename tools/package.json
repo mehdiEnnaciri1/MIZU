@@ -1,1 +1,13 @@
-{"name":"mizu-tools","private":true,"description":"Outils d'import (dev uniquement)","dependencies":{"sharp":"^0.33.5","unzipper":"^0.12.5","xlsx":"^0.18.5"}}
+{
+  "name": "mizu-tools",
+  "private": true,
+  "description": "Outils d'import (dev uniquement)",
+  "dependencies": {
+    "sharp": "^0.33.5",
+    "unzipper": "^0.12.5",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "import:carimali": "node carimali-images.js && node import-carimali.js"
+  }
+}

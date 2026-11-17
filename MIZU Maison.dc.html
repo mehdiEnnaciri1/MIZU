@@ -29,7 +29,7 @@ a:hover{color:#8C7B6B;}
       <div style="max-width:1440px;margin:0 auto;padding:0 72px;display:flex;justify-content:space-between;align-items:flex-end;color:#FFFFFF;">
         <div style="max-width:760px;">
           <p style="margin:0 0 24px;display:flex;align-items:center;gap:20px;font-size:13px;letter-spacing:0.4em;text-transform:uppercase;font-weight:500;"><span style="width:56px;height:1px;background:#FFFFFF;"></span>{{ m.num }} · {{ m.origin }} <span style="font-family:'Noto Sans JP', sans-serif;letter-spacing:0.2em;">{{ m.jp }}</span></p>
-          <h1 style="margin:0;"><img src="img/logos/{{ m.key }}-white.svg" alt="{{ m.name }}" style="height:{{ m.logoH }};width:auto;display:block;"></h1>
+          <h1 style="margin:0;"><img src="{{ logoSrc }}" alt="{{ m.name }}" style="height:{{ m.logoH }};width:auto;display:block;"></h1>
           <p style="margin:28px 0 0;max-width:480px;font-size:17px;line-height:1.9;font-weight:300;">{{ m.tagline }}</p>
         </div>
         <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-end;">
@@ -118,7 +118,7 @@ a:hover{color:#8C7B6B;}
   <dc-import name="MIZU-Footer" hint-size="100%,520px"></dc-import>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;maison&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;toto&quot;,&quot;bagnodesign&quot;,&quot;jeeo&quot;],&quot;default&quot;:&quot;toto&quot;,&quot;tsType&quot;:&quot;'toto'|'bagnodesign'|'jeeo'&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;maison&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;toto&quot;,&quot;bagnodesign&quot;,&quot;jeeo&quot;,&quot;carimali&quot;],&quot;default&quot;:&quot;toto&quot;,&quot;tsType&quot;:&quot;'toto'|'bagnodesign'|'jeeo'|'carimali'&quot;}}">
 class Component extends DCLogic {
   state = { key: null, cat: 'Tout' };
   componentDidMount() {
@@ -150,7 +150,8 @@ class Component extends DCLogic {
       label, bg: label === cat ? '#2A2622' : '#FFFFFF', ink: label === cat ? '#FFFFFF' : '#2A2622', line: label === cat ? '#2A2622' : '#E4DED6',
       select: () => this.setState({ cat: label })
     }));
-    return { m, tabs, features, amb: m.amb, cats, items: (cat === 'Tout' ? all : all.filter((p) => p.cat === cat)).filter((p, i, arr) => arr.findIndex((x) => x.model === p.model) === i).slice(0, 8) };
+    const logoSrc = m.logo || 'img/logos/' + m.key + '-white.svg'; // .png accepté (ex. CARIMALI) quand il n'y a pas de .svg
+    return { m, logoSrc, tabs, features, amb: m.amb, cats, items: (cat === 'Tout' ? all : all.filter((p) => p.cat === cat)).filter((p, i, arr) => arr.findIndex((x) => x.model === p.model) === i).slice(0, 8) };
   }
 }
 </script>

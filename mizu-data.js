@@ -19,7 +19,10 @@
   const maisons = {
     toto: { key: 'toto', name: 'TOTO', origin: 'Japon', jp: '日本', num: '01', logoH: '96px', hero: 'img/web/m5.jpg', pos: 'center 60%', tagline: 'Haute technologie et hygiène absolue.', intro: 'Depuis 1917, TOTO conçoit la salle de bain comme un rituel japonais : l’eau, la chaleur et la propreté réglées au degré près. MIZU présente au Maroc les collections NEOREST, WASHLET et la céramique CeFiONtect.', cats: ['WC lavant', 'WC', 'Vasque', 'Robinetterie', 'Baignoire'], feature: ['neorest', 'zero'], amb: ['img/amb/m1.jpg', 'img/amb/m2.jpg'] },
     bagnodesign: { key: 'bagnodesign', name: 'BAGNODESIGN', origin: 'Royaume-Uni', jp: '', num: '02', logoH: '54px', hero: 'img/web/f3.jpg', pos: '40% center', tagline: 'Le lifestyle britannique en solutions complètes.', intro: 'BAGNODESIGN compose des salles de bain complètes, de la vasque à la baignoire, avec des finitions chaudes qui s’accordent aux matières du Maroc : bronze, laiton, marbre.', cats: ['Robinetterie', 'Douche', 'Vasque', 'Baignoire'], feature: ['mit', 'bai'], amb: ['img/amb/f1.jpg', 'img/amb/f4.jpg'] },
-    jeeo: { key: 'jeeo', name: 'JEE-O', origin: 'Pays-Bas', jp: '', num: '03', logoH: '200px', hero: 'img/web/o2.jpg', pos: 'center 30%', tagline: 'Un minimalisme sculptural en acier inoxydable.', intro: 'JEE-O dessine aux Pays-Bas des douches et une robinetterie en inox 316, pensées pour durer dehors comme dedans. Des lignes nettes, une matière unique.', cats: ['Douche', 'Robinetterie', 'Accessoire'], feature: ['d01', 'mur'], amb: ['img/amb/o1.jpg', 'img/amb/o4.jpg'] }
+    jeeo: { key: 'jeeo', name: 'JEE-O', origin: 'Pays-Bas', jp: '', num: '03', logoH: '200px', hero: 'img/web/o2.jpg', pos: 'center 30%', tagline: 'Un minimalisme sculptural en acier inoxydable.', intro: 'JEE-O dessine aux Pays-Bas des douches et une robinetterie en inox 316, pensées pour durer dehors comme dedans. Des lignes nettes, une matière unique.', cats: ['Douche', 'Robinetterie', 'Accessoire'], feature: ['d01', 'mur'], amb: ['img/amb/o1.jpg', 'img/amb/o4.jpg'] },
+    // TODO(photos) : hero + ambiances = produits sur fond crème PROVISOIRES (tools/carimali-placeholders.js) ; remplacer par de vraies photos.
+    // TODO(texte) : tagline + intro à faire valider. Logo = PNG (pas de SVG disponible), cf. champ logo.
+    carimali: { key: 'carimali', name: 'CARIMALI', origin: 'Italie', jp: '', num: '04', logoH: '72px', logo: 'img/logos/carimali.png', logoBlack: 'img/logos/carimali-footer.png', hero: 'img/web/carimali-hero.jpg', pos: 'center center', tagline: 'Robinetterie et systèmes de douche, fabriqués en Italie.', intro: 'CARIMALI est une marque italienne de robinetterie et de systèmes de douche. Ses collections, fabriquées en Italie, couvrent les mitigeurs, les colonnes, les pommeaux et les accessoires de salle de bain.', cats: ['Douche – Mitigeurs encastrés', 'Colonnes de douche', 'Robinetterie – Lavabo'], feature: ['00-0900-CR', '0-CRW0701-CR'], amb: ['img/amb/carimali-1.jpg', 'img/amb/carimali-2.jpg'] }
   };
   const KEY = 'mizu-sel';
   const getSel = () => {
@@ -60,7 +63,7 @@
         sprite = { url: 'img/bagno-sprites/s' + sheet + '.jpg', size: (S.C * 100) + '% ' + (rows * 100) + '%', pos: (col / (S.C - 1) * 100).toFixed(3) + '% ' + (rows > 1 ? (row / (rows - 1) * 100).toFixed(3) : '0') + '%' };
       }
       const fallback = 'img/logos/' + brand.toLowerCase().replace('-', '') + '-black.svg';
-      return { id: r[0], qid: encodeURIComponent(r[0]), brand, name, model, finish, desc: r[3], cat: C.cats[r[4]], url: r[5], img: (noimg || sprite) ? fallback : r[6], ref: r[0], zoom: noimg ? 0.4 : 1, noimg, sprite, hasSprite: !!sprite, noSprite: !sprite, finishes: [], ext: true };
+      return { id: r[0], qid: encodeURIComponent(r[0]), brand, name, model, finish, desc: r[3], cat: C.cats[r[4]], url: r[5], img: (noimg || sprite) ? fallback : r[6], ref: r[0], zoom: noimg ? 0.4 : 1, noimg, sprite, hasSprite: !!sprite, noSprite: !sprite, finishes: [], finishNote: r[7] || '', kw: r[8] || '', ext: true };
     });
     cache.sort((a, b) => (a.noimg ? 1 : 0) - (b.noimg ? 1 : 0));
     return cache;

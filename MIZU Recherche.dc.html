@@ -93,7 +93,7 @@ class Component extends DCLogic {
     const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const nq = norm(q.trim());
     const P = M ? M.all() : [];
-    const found = nq ? P.filter((p) => norm([p.name, p.brand, p.cat, p.ref, (p.tech || []).join(' ')].join(' ')).includes(nq)) : (M ? M.products.slice(0, 8) : []);
+    const found = nq ? P.filter((p) => norm([p.name, p.brand, p.cat, p.ref, (p.tech || []).join(' '), p.kw || ''].join(' ')).includes(nq)) : (M ? M.products.slice(0, 8) : []);
     const results = found.slice(0, 48);
     const pageIdx = [
       { label: 'TOTO', sub: 'Maison · Japon', href: 'MIZU%20Maison.dc.html?m=toto', k: 'toto japon washlet neorest' },
