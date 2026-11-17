@@ -106,7 +106,7 @@ class Component extends DCLogic {
     const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     const nq = norm(q.trim());
     const P0 = M.all();
-    const P = nq ? P0.filter((p) => norm(p.name + ' ' + p.ref + ' ' + p.cat).includes(nq)) : P0;
+    const P = nq ? P0.filter((p) => norm(p.name + ' ' + p.ref + ' ' + p.cat + ' ' + (p.kw || '')).includes(nq)) : P0;
     const byBrand = brand === 'Tout' ? P : P.filter((p) => p.brand === brand);
     let items = cat === 'Tout' ? byBrand : byBrand.filter((p) => p.cat === cat);
     if (sort === 'Nom') items = [...items].sort((a, b) => a.name.localeCompare(b.name));
