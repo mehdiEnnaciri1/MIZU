@@ -26,7 +26,7 @@ a:hover{color:#8C7B6B;}
     <div style="max-width:1440px;margin:0 auto;padding:88px 72px 80px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
       <span style="font-size:13px;letter-spacing:0.08em;color:#8C7B6B;"><a href="MIZU%20Accueil%20Desktop%20v2.dc.html" style-hover="color:#2A2622;">Accueil</a> &nbsp;/&nbsp; Catalogue</span>
       <h1 style="margin:0;font-family:Jost, sans-serif;font-weight:500;font-size:40px;line-height:1.1;letter-spacing:0.02em;text-transform:uppercase;color:#0A0A0A;">Catalogue</h1>
-      <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">Les pièces TOTO, BAGNODESIGN et JEE-O présentées au showroom MIZU de Casablanca.</p>
+      <p style="margin:0;max-width:560px;font-size:16px;line-height:1.7;font-weight:300;color:#5A4E42;">Les pièces TOTO, BAGNODESIGN, JEE-O et CARIMALI présentées au showroom MIZU de Casablanca.</p>
     </div>
   </section>
 
@@ -100,7 +100,7 @@ class Component extends DCLogic {
   renderVals() {
     const M = window.MIZU;
     if (!M) return { brands: [], cats: [], sorts: [], items: [], countLabel: '' };
-    const keyMap = { toto: 'TOTO', bagnodesign: 'BAGNODESIGN', jeeo: 'JEE-O' };
+    const keyMap = { toto: 'TOTO', bagnodesign: 'BAGNODESIGN', jeeo: 'JEE-O', carimali: 'CARIMALI' };
     const brand = this.state.brand || keyMap[M.param('m')] || 'Tout';
     const { cat, sort, limit, q } = this.state;
     const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -112,7 +112,7 @@ class Component extends DCLogic {
     if (sort === 'Nom') items = [...items].sort((a, b) => a.name.localeCompare(b.name));
     if (sort === 'Catégorie') items = [...items].sort((a, b) => a.cat.localeCompare(b.cat));
     const on = (a, b) => a === b;
-    const brands = ['Tout', 'TOTO', 'BAGNODESIGN', 'JEE-O'].map((label) => ({
+    const brands = ['Tout', 'TOTO', 'BAGNODESIGN', 'JEE-O', 'CARIMALI'].map((label) => ({
       label: label === 'Tout' ? 'Toutes les maisons' : label,
       n: label === 'Tout' ? P.length : P.filter((p) => p.brand === label).length,
       fw: on(label, brand) ? 600 : 400, ink: on(label, brand) ? '#2A2622' : '#5A4E42', dot: on(label, brand) ? '#2A2622' : 'transparent',
