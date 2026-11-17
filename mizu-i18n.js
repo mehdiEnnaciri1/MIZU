@@ -25,7 +25,7 @@
     'Confidentialité': 'Privacy', 'Recevez le Lookbook 2026 et nos nouvelles sélections.': 'Receive the 2026 Lookbook and our latest selections.', 'Suivez-nous': 'Follow us',
     'MIZU MAROC 2026 | Conception et Réalisation': 'MIZU MAROC 2026 | Design and development', 'Politique de confidentialité': 'Privacy policy', 'Votre adresse e-mail': 'Your email address',
     'Accueil': 'Home', '/ Catalogue': '/ Catalogue', '/ Contact': '/ Contact', '/ Ma sélection': '/ My selection', '› Projets': '› Projects', '› Showroom': '› Showroom',
-    'Les pièces TOTO, BAGNODESIGN et JEE-O présentées au showroom MIZU de Casablanca.': 'TOTO, BAGNODESIGN and JEE-O pieces on display at the MIZU showroom in Casablanca.',
+    'Les pièces TOTO, BAGNODESIGN, JEE-O et CARIMALI présentées au showroom MIZU de Casablanca.': 'TOTO, BAGNODESIGN, JEE-O and CARIMALI pieces on display at the MIZU showroom in Casablanca.',
     'Maison': 'Brand', 'Catégorie': 'Category', 'Effacer les filtres': 'Clear filters', 'Un projet complet ?': 'A complete project?',
     'Architectes, promoteurs, hôtels : nous préparons un devis sur plan.': 'Architects, developers, hotels: we prepare quotes from plans.', 'Nous contacter →': 'Contact us →', 'Trier': 'Sort',
     'Aucune pièce ne correspond à ces filtres.': 'No pieces match these filters.', 'Parlons de votre projet': 'Let’s talk about your project', 'Réponse sous 24 h': 'Reply within 24 h',
@@ -138,6 +138,7 @@
     const k = norm(s);
     if (!k) return s;
     if (D[k] !== undefined) return D[k];
+    const X = window.MIZU_I18N_EXTRA; if (X && X[k] !== undefined) return X[k];
     for (const [re, rep] of RULES) {
       if (re.test(k)) { const r = typeof rep === 'function' ? k.replace(re, rep) : k.replace(re, rep); if (r && r !== 'null' && r !== k) return r; }
     }
@@ -176,10 +177,16 @@
   let raf = 0;
   let last = 0;
   const schedule = () => { if (raf) return; const wait = Math.max(0, 250 - (Date.now() - last)); raf = setTimeout(() => { raf = 0; last = Date.now(); apply(); }, wait); };
+  let extraLoaded = false;
+  function loadExtra() {
+    if (extraLoaded) return; extraLoaded = true;
+    const s = document.createElement('script'); s.src = 'mizu-i18n-carimali.js'; s.onload = () => apply(); document.head.appendChild(s);
+  }
   let started = false;
   function start() {
     if (getLang() !== 'en' || started) return;
     started = true;
+    loadExtra();
     apply();
     const mo = new MutationObserver(() => { if (!busy) schedule(); });
     mo.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['placeholder'] });
@@ -188,7 +195,7 @@
   window.MIZU_I18N = { tr, apply, getLang };
   window.MIZU_LANG = {
     get: getLang,
-    set: (l) => { try { localStorage.setItem('mizu-lang', l); } catch (e) {} window.dispatchEvent(new Event('mizu-lang')); if (l === 'en') start(); apply(); }
+    set: (l) => { try { localStorage.setItem('mizu-lang', l); } catch (e) {} window.dispatchEvent(new Event('mizu-lang')); if (l === 'en') { loadExtra(); start(); } apply(); }
   };
   window.addEventListener('storage', (e) => { if (e.key === 'mizu-lang') { window.dispatchEvent(new Event('mizu-lang')); apply(); } });
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
