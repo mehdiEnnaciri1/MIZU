@@ -9,6 +9,7 @@ MIZU Wireframe Accueil.dc.html
 
 # Données sources fournisseurs (xlsx lourds) : décommenter pour les versionner
 data/*.xlsx
+!data/CARIMALI.xlsx
 
 # Divers
 .thumbnail
@@ -22,3 +23,4 @@ Thumbs.db
 .claude/
 
 tools/_tr/
+screenshots/

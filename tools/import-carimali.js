@@ -3,7 +3,7 @@
 const fs = require('fs'), path = require('path'), L = require('./carimali-lib');
 const ROOT = path.join(__dirname, '..');
 const TR = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/carimali-translations.json'), 'utf8')); // {n:{tpl:[fr,en]}, s:{tpl:[fr,en]}}
-const IMG = JSON.parse(fs.readFileSync(path.join(__dirname, '_tr/imgmap.json'), 'utf8'));
+const IMG = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/carimali-imgmap.json'), 'utf8'));
 
 const CAT = {
   'miscelatori lavabo': 'Robinetterie – Lavabo', 'miscelatori bidet': 'Robinetterie – Bidet', 'miscelatori vasca': 'Robinetterie – Baignoire',
@@ -71,7 +71,7 @@ const missing = [];
 out.forEach(o => {
   const img = IMG[o.i.img];
   if (!img) missing.push(o.i.ref);
-  C.rows.push([o.i.ref, b, o.model[0] + ' - ' + o.i.fin[0], o.desc[0], ci(o.cat), o.i.url, img || '']);
+  C.rows.push([o.i.ref, b, o.model[0] + ' - ' + o.i.fin[0], o.desc[0], ci(o.cat), o.i.url, img || '', o.i.suf === 'CRX' ? 'à confirmer' : '', o.i.name]); // r[7] = finishNote (CRX : chromé ou inox poli ?) ; r[8] = nom italien d'origine (recherche : « soffione »…)
 });
 fs.writeFileSync(file, 'window.MIZU_CATALOG=' + JSON.stringify(C) + ';' + mm[2] + '\n');
 
