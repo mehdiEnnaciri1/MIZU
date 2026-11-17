@@ -45,6 +45,16 @@ select.st{border:1.5px solid #E4DED6;border-radius:999px;padding:6px 10px;backgr
 .empty{padding:48px;text-align:center;color:#8C7B6B;background:#fff;border-radius:16px}
 .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#ECE7E0;font-size:12px;font-weight:500}
 .scroll{overflow-x:auto}
+.pform{background:#fff;border-radius:16px;padding:28px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px 20px}
+.pform label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#8C7B6B;font-weight:500}
+.pform input[type=text],.pform input[type=url],.pform select,.pform textarea{border:1.5px solid #E4DED6;border-radius:12px;padding:10px 14px;font-size:14px;color:#2A2622;background:#fff;outline:none;font-family:inherit}
+.pform textarea{min-height:84px;resize:vertical}
+.pform .full{grid-column:1/-1}
+.pform .photo{display:flex;gap:16px;align-items:center}
+.thumb{width:64px;height:64px;border-radius:10px;background:#F3F1EE;object-fit:contain;flex:none}
+.ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.off td{opacity:.55}
+@media(max-width:760px){.pform{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -75,7 +85,7 @@ select.st{border:1.5px solid #E4DED6;border-radius:999px;padding:6px 10px;backgr
 </section>
 
 <script>
-const TABS = [['leads', 'Contacts & documents'], ['quotes', 'Devis'], ['appointments', 'Rendez-vous']];
+const TABS = [['leads', 'Contacts & documents'], ['quotes', 'Devis'], ['appointments', 'Rendez-vous'], ['products', 'Produits']];
 const STATUS = {
   leads: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
   appointments: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
@@ -108,10 +118,10 @@ async function api(path, opts = {}) {
 function logout() { token = null; try { sessionStorage.removeItem('mizu-admin'); } catch (e) {} $('app').classList.add('hide'); $('login').classList.remove('hide'); }
 
 async function load(t) {
-  const d = await api('data?table=' + t);
+  const d = await api(t === 'products' ? 'products' : 'data?table=' + t);
   rows[t] = d.rows || [];
 }
-async function loadAll() { await Promise.all(TABS.map((x) => load(x[0]))); renderTabs(); render(); }
+async function loadAll() { await Promise.all(TABS.map((x) => load(x[0]).catch((e) => { if (e.message === 'auth') throw e; rows[x[0]] = []; }))); renderTabs(); render(); }
 
 function renderTabs() {
   const box = $('tabs'); box.textContent = '';
@@ -122,6 +132,7 @@ function renderTabs() {
 }
 function fillStatus() {
   const s = $('statusFilter'); s.textContent = '';
+  if (tab === 'products') return;
   s.append(el('option', { value: '' }, 'Tous les statuts'));
   STATUS[tab].forEach(([v, l]) => s.append(el('option', { value: v }, l)));
 }
@@ -131,6 +142,8 @@ function visible() {
 }
 function render() {
   const list = $('list'); list.textContent = '';
+  document.querySelector('.bar').classList.toggle('hide', tab === 'products');
+  if (tab === 'products') return renderProducts();
   const data = visible();
   if (!data.length) { list.append(el('div', { class: 'empty' }, 'Aucune demande.')); return; }
   const cols = COLS[tab];
@@ -177,6 +190,98 @@ function csv() {
   const out = '﻿' + [keys.join(';')].concat(data.map((r) => keys.map((k) => q(r[k])).join(';'))).join('\r\n');
   const a = el('a', { href: URL.createObjectURL(new Blob([out], { type: 'text/csv;charset=utf-8' })), download: 'mizu-' + tab + '-' + new Date().toISOString().slice(0, 10) + '.csv' });
   document.body.append(a); a.click(); a.remove();
+}
+
+// ---------- Produits (ajoutés depuis l'admin ; complètent le catalogue statique) ----------
+const BRANDS = ['TOTO', 'BAGNODESIGN', 'JEE-O', 'CARIMALI'];
+const CATS = ['Baignoire', 'Bidet', 'Vasque', 'WC lavant', 'WC', 'Robinetterie', 'Douche', 'Accessoire', 'Mobilier', 'Miroir', 'Sèche-serviettes', 'Colonnes de douche', 'Douchettes & kits', 'Wellness', 'Extérieur'];
+let editing = null; // null | 'new' | id
+
+// Réduit la photo (1000 px max, JPEG) avant l'envoi, puis la téléverse ; renvoie l'URL publique.
+function shrink(file) {
+  return new Promise((ok, ko) => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, 1000 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
+    };
+    img.onerror = () => { URL.revokeObjectURL(u); ko(new Error('image')); };
+    img.src = u;
+  });
+}
+async function uploadPhoto(file) {
+  const data = await shrink(file);
+  const d = await api('upload', { method: 'POST', body: JSON.stringify({ data, type: 'image/jpeg' }) });
+  return d.url;
+}
+
+function productForm(p) {
+  const v = p || { brand: 'CARIMALI', active: true };
+  const f = {};
+  const text = (k, label, opts = {}) => { f[k] = el('input', { type: opts.type || 'text', value: v[k] || '', placeholder: opts.ph || '' }); if (opts.list) f[k].setAttribute('list', opts.list); return el('label', { class: opts.full ? 'full' : '' }, label, f[k]); };
+  const area = (k, label) => { f[k] = el('textarea', {}); f[k].value = v[k] || ''; return el('label', { class: 'full' }, label, f[k]); };
+  f.brand = el('select', {}, BRANDS.map((b) => { const o = el('option', { value: b }, b); if (b === v.brand) o.selected = true; return o; }));
+  f.active = el('input', { type: 'checkbox' }); f.active.checked = v.active !== false;
+  let imageUrl = v.image_url || '';
+  const thumb = el('img', { class: 'thumb', alt: '' }); if (imageUrl) thumb.src = imageUrl; else thumb.classList.add('hide');
+  const file = el('input', { type: 'file', accept: 'image/*' });
+  const msg = el('p', { class: 'err full', style: 'margin:0' });
+  file.onchange = async () => {
+    if (!file.files[0]) return; msg.textContent = 'Envoi de la photo…';
+    try { imageUrl = await uploadPhoto(file.files[0]); thumb.src = imageUrl; thumb.classList.remove('hide'); msg.textContent = ''; }
+    catch (e) { msg.textContent = e.message === 'auth' ? '' : 'Envoi de la photo impossible.'; }
+  };
+  const save = el('button', { class: 'btn', type: 'button', onclick: async () => {
+    msg.textContent = '';
+    const body = { ref: f.ref.value, brand: f.brand.value, category: f.category.value, name: f.name.value, name_en: f.name_en.value, finish: f.finish.value,
+      description: f.description.value, description_en: f.description_en.value, product_url: f.product_url.value, image_url: imageUrl, active: f.active.checked };
+    if (!body.ref.trim() || !body.category.trim() || !body.name.trim()) { msg.textContent = 'Référence, catégorie et nom sont obligatoires.'; return; }
+    if (body.product_url && !/^https?:\/\//i.test(body.product_url)) { msg.textContent = 'Le lien doit commencer par http:// ou https://'; return; }
+    try {
+      const d = await api('products', { method: p ? 'PATCH' : 'POST', body: JSON.stringify(p ? { id: p.id, ...body } : body) });
+      rows.products = p ? rows.products.map((x) => (x.id === p.id ? d.row : x)) : [d.row].concat(rows.products || []);
+      editing = null; render();
+    } catch (e) {
+      msg.textContent = e.message === 'auth' ? '' : /409/.test(e.message) ? 'Cette référence existe déjà.' : 'Enregistrement impossible (champs invalides ?).';
+    }
+  } }, p ? 'Enregistrer' : 'Ajouter le produit');
+  const dl = el('datalist', { id: 'cats' }, CATS.concat([...new Set((rows.products || []).map((x) => x.category))]).map((c) => el('option', { value: c })));
+  return el('div', { class: 'pform' },
+    text('ref', 'Référence *', { ph: 'ex. 00-0900-CR' }), el('label', {}, 'Maison *', f.brand),
+    text('category', 'Catégorie *', { list: 'cats', ph: 'ex. Robinetterie' }), text('finish', 'Finition', { ph: 'ex. Chromé' }),
+    text('name', 'Nom (français) *', { full: true }), text('name_en', 'Nom (anglais)', { full: true }),
+    area('description', 'Description (français)'), area('description_en', 'Description (anglais)'),
+    text('product_url', 'Lien officiel du produit (facultatif)', { type: 'url', full: true, ph: 'https://…' }),
+    el('label', { class: 'full' }, 'Photo', el('div', { class: 'photo' }, thumb, file)),
+    el('label', { class: 'full', style: 'flex-direction:row;align-items:center;gap:10px' }, f.active, 'Visible sur le site'),
+    msg, el('div', { class: 'full', style: 'display:flex;gap:10px' }, save, el('button', { class: 'btn ghost', type: 'button', onclick: () => { editing = null; render(); } }, 'Annuler')), dl);
+}
+
+function renderProducts() {
+  const list = $('list');
+  const data = rows.products || [];
+  list.append(el('div', { class: 'ptop' }, el('span', { class: 'muted' }, data.length + ' produit(s) ajouté(s) ici — ils s’ajoutent au catalogue existant.'),
+    el('button', { class: 'btn sm', onclick: () => { editing = 'new'; render(); } }, '+ Ajouter un produit')));
+  if (editing === 'new') list.append(productForm(null));
+  if (!data.length && editing !== 'new') { list.append(el('div', { class: 'empty' }, 'Aucun produit ajouté pour le moment.')); return; }
+  if (!data.length) return;
+  const tb = el('tbody');
+  data.forEach((p) => {
+    if (editing === p.id) { tb.append(el('tr', {}, el('td', { colspan: 6, style: 'padding:0;background:#F5F1EC' }, productForm(p)))); return; }
+    const toggle = el('button', { class: 'btn ghost sm', onclick: async () => {
+      try { const d = await api('products', { method: 'PATCH', body: JSON.stringify({ id: p.id, active: !p.active }) }); Object.assign(p, d.row); render(); } catch (e) { if (e.message !== 'auth') alert('Mise à jour impossible.'); }
+    } }, p.active ? 'Masquer' : 'Afficher');
+    const del = el('button', { class: 'btn ghost sm', onclick: async () => {
+      if (!confirm('Supprimer définitivement « ' + p.name + ' » ?')) return;
+      try { await api('products', { method: 'DELETE', body: JSON.stringify({ id: p.id }) }); rows.products = rows.products.filter((x) => x.id !== p.id); render(); } catch (e) { if (e.message !== 'auth') alert('Suppression impossible.'); }
+    } }, 'Supprimer');
+    const img = el('img', { class: 'thumb', alt: '' }); if (p.image_url) img.src = p.image_url;
+    tb.append(el('tr', { class: p.active ? '' : 'off' }, el('td', {}, img), el('td', {}, p.ref), el('td', {}, p.name + (p.finish ? ' — ' + p.finish : '')), el('td', {}, p.brand + ' · ' + p.category),
+      el('td', {}, p.active ? 'Visible' : 'Masqué'), el('td', { style: 'white-space:nowrap;display:flex;gap:8px' }, el('button', { class: 'btn ghost sm', onclick: () => { editing = p.id; render(); } }, 'Modifier'), toggle, del)));
+  });
+  list.append(el('table', {}, el('thead', {}, el('tr', {}, ['', 'Référence', 'Nom', 'Maison · catégorie', 'État', ''].map((h) => el('th', {}, h)))), tb));
 }
 
 async function start() {

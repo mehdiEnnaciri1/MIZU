@@ -43,9 +43,12 @@
   const count = () => sel().reduce((a, x) => a + x.qty, 0);
   products.forEach((p) => { p.qid = p.id; p.model = p.name; p.noSprite = true; p.hasSprite = false; });
   let cache = null;
+  // Produits ajoutés depuis /admin (table Supabase « products »), chargés via /api/products.
+  let extra = [];
+  const fromAdmin = (x) => ({ id: x.ref, qid: encodeURIComponent(x.ref), brand: x.brand, name: x.name + (x.finish ? ' - ' + x.finish : ''), model: x.name, finish: x.finish || '', desc: x.description || '', cat: x.category, url: x.product_url || '', img: x.image_url || ('img/logos/' + x.brand.toLowerCase().replace('-', '') + '-black.svg'), ref: x.ref, zoom: x.image_url ? 1 : 0.4, noimg: !x.image_url, sprite: null, hasSprite: false, noSprite: true, finishes: [], finishNote: '', kw: '', ext: true });
   const all = () => {
     const C = window.MIZU_CATALOG;
-    if (!C) return products;
+    if (!C) return extra.length ? products.concat(extra.map(fromAdmin)) : products;
     if (cache) return cache;
     cache = C.rows.map((r) => {
       const name = r[2] || r[0];
@@ -65,6 +68,7 @@
       const fallback = 'img/logos/' + brand.toLowerCase().replace('-', '') + '-black.svg';
       return { id: r[0], qid: encodeURIComponent(r[0]), brand, name, model, finish, desc: r[3], cat: C.cats[r[4]], url: r[5], img: (noimg || sprite) ? fallback : r[6], ref: r[0], zoom: noimg ? 0.4 : 1, noimg, sprite, hasSprite: !!sprite, noSprite: !sprite, finishes: [], finishNote: r[7] || '', kw: r[8] || '', ext: true };
     });
+    cache = extra.map(fromAdmin).concat(cache);
     cache.sort((a, b) => (a.noimg ? 1 : 0) - (b.noimg ? 1 : 0));
     return cache;
   };
@@ -101,4 +105,12 @@
   const send = (route, body) => fetch('/api/' + route, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then((r) => { if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
   window.MIZU = { products, maisons, getSel, setSel, sel, addSel, count, byId, param, all, variants, docsFor, send };
   window.dispatchEvent(new Event('mizu-ready'));
+  fetch('/api/products').then((x) => (x.ok ? x.json() : null)).then((d) => {
+    if (!d || !Array.isArray(d.rows) || !d.rows.length) return;
+    extra = d.rows; cache = null;
+    const en = {};
+    extra.forEach((x) => { if (x.name_en) { en[x.name + (x.finish ? ' - ' + x.finish : '')] = x.name_en + (x.finish ? ' - ' + x.finish : ''); en[x.name] = x.name_en; } if (x.description && x.description_en) en[x.description] = x.description_en; });
+    window.MIZU_I18N_EXTRA = Object.assign(window.MIZU_I18N_EXTRA || {}, en);
+    window.dispatchEvent(new Event('mizu-ready'));
+  }).catch(() => {});
 })();
