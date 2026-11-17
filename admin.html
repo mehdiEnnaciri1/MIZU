@@ -279,7 +279,7 @@ function renderProducts() {
     } }, 'Supprimer');
     const img = el('img', { class: 'thumb', alt: '' }); if (p.image_url) img.src = p.image_url;
     tb.append(el('tr', { class: p.active ? '' : 'off' }, el('td', {}, img), el('td', {}, p.ref), el('td', {}, p.name + (p.finish ? ' — ' + p.finish : '')), el('td', {}, p.brand + ' · ' + p.category),
-      el('td', {}, p.active ? 'Visible' : 'Masqué'), el('td', { style: 'white-space:nowrap;display:flex;gap:8px' }, el('button', { class: 'btn ghost sm', onclick: () => { editing = p.id; render(); } }, 'Modifier'), toggle, del)));
+      el('td', {}, p.active ? 'Visible' : 'Masqué'), el('td', { style: 'white-space:nowrap' }, el('div', { style: 'display:flex;gap:8px' }, el('button', { class: 'btn ghost sm', onclick: () => { editing = p.id; render(); } }, 'Modifier'), toggle, del))));
   });
   list.append(el('table', {}, el('thead', {}, el('tr', {}, ['', 'Référence', 'Nom', 'Maison · catégorie', 'État', ''].map((h) => el('th', {}, h)))), tb));
 }
