@@ -113,4 +113,22 @@
     window.MIZU_I18N_EXTRA = Object.assign(window.MIZU_I18N_EXTRA || {}, en);
     window.dispatchEvent(new Event('mizu-ready'));
   }).catch(() => {});
+  // Contenu des pages Maison modifié depuis /admin (table « site_blocks », clé maison:<key>) ; les valeurs vides gardent le texte d'origine.
+  fetch('/api/content').then((x) => (x.ok ? x.json() : null)).then((d) => {
+    const B = d && d.blocks;
+    if (!B) return;
+    const en = {}; let changed = false;
+    Object.keys(B).forEach((k) => {
+      const m = k.indexOf('maison:') === 0 && maisons[k.slice(7)], v = B[k];
+      if (!m || !v) return;
+      ['tagline', 'intro'].forEach((f) => { if (v[f]) { m[f] = v[f]; if (v[f + '_en']) en[v[f]] = v[f + '_en']; changed = true; } });
+      if (v.hero) { m.hero = v.hero; changed = true; }
+      if (v.amb1 || v.amb2) { m.amb = [v.amb1 || m.amb[0], v.amb2 || m.amb[1]]; changed = true; }
+      const ft = [v.feature1, v.feature2].filter(Boolean);
+      if (ft.length && ft.every((id) => byId(id))) { m.feature = ft; changed = true; } // ignoré si une référence est inconnue
+    });
+    if (!changed) return;
+    window.MIZU_I18N_EXTRA = Object.assign(window.MIZU_I18N_EXTRA || {}, en);
+    window.dispatchEvent(new Event('mizu-ready'));
+  }).catch(() => {});
 })();

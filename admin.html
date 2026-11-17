@@ -84,8 +84,9 @@ select.st{border:1.5px solid #E4DED6;border-radius:999px;padding:6px 10px;backgr
   </main>
 </section>
 
+<script src="mizu-data.js"></script>
 <script>
-const TABS = [['leads', 'Contacts & documents'], ['quotes', 'Devis'], ['appointments', 'Rendez-vous'], ['products', 'Produits']];
+const TABS = [['leads', 'Contacts & documents'], ['quotes', 'Devis'], ['appointments', 'Rendez-vous'], ['products', 'Produits'], ['content', 'Maisons']];
 const STATUS = {
   leads: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
   appointments: [['new', 'Nouveau'], ['in_progress', 'En cours'], ['done', 'Traité']],
@@ -118,7 +119,7 @@ async function api(path, opts = {}) {
 function logout() { token = null; try { sessionStorage.removeItem('mizu-admin'); } catch (e) {} $('app').classList.add('hide'); $('login').classList.remove('hide'); }
 
 async function load(t) {
-  const d = await api(t === 'products' ? 'products' : 'data?table=' + t);
+  const d = await api(t === 'products' || t === 'content' ? t : 'data?table=' + t);
   rows[t] = d.rows || [];
 }
 async function loadAll() { await Promise.all(TABS.map((x) => load(x[0]).catch((e) => { if (e.message === 'auth') throw e; rows[x[0]] = []; }))); renderTabs(); render(); }
@@ -132,7 +133,7 @@ function renderTabs() {
 }
 function fillStatus() {
   const s = $('statusFilter'); s.textContent = '';
-  if (tab === 'products') return;
+  if (tab === 'products' || tab === 'content') return;
   s.append(el('option', { value: '' }, 'Tous les statuts'));
   STATUS[tab].forEach(([v, l]) => s.append(el('option', { value: v }, l)));
 }
@@ -142,8 +143,9 @@ function visible() {
 }
 function render() {
   const list = $('list'); list.textContent = '';
-  document.querySelector('.bar').classList.toggle('hide', tab === 'products');
+  document.querySelector('.bar').classList.toggle('hide', tab === 'products' || tab === 'content');
   if (tab === 'products') return renderProducts();
+  if (tab === 'content') return renderContent();
   const data = visible();
   if (!data.length) { list.append(el('div', { class: 'empty' }, 'Aucune demande.')); return; }
   const cols = COLS[tab];
@@ -282,6 +284,62 @@ function renderProducts() {
       el('td', {}, p.active ? 'Visible' : 'Masqué'), el('td', { style: 'white-space:nowrap' }, el('div', { style: 'display:flex;gap:8px' }, el('button', { class: 'btn ghost sm', onclick: () => { editing = p.id; render(); } }, 'Modifier'), toggle, del))));
   });
   list.append(el('table', {}, el('thead', {}, el('tr', {}, ['', 'Référence', 'Nom', 'Maison · catégorie', 'État', ''].map((h) => el('th', {}, h)))), tb));
+}
+
+// ---------- Maisons : textes, visuels et pièces signature des pages Maison ----------
+let openMaison = null;
+function maisonForm(key) {
+  const M = window.MIZU && window.MIZU.maisons ? window.MIZU.maisons[key] : null;
+  const row = (rows.content || []).find((x) => x.key === 'maison:' + key);
+  const saved = (row && row.data) || {};
+  const f = {}, img = { hero: saved.hero || (M && M.hero) || '', amb1: saved.amb1 || (M && M.amb && M.amb[0]) || '', amb2: saved.amb2 || (M && M.amb && M.amb[1]) || '' };
+  const msg = el('p', { class: 'err full', style: 'margin:0' });
+  const text = (k, label, val, full) => { f[k] = el('input', { type: 'text', value: val || '' }); return el('label', { class: full ? 'full' : '' }, label, f[k]); };
+  const area = (k, label, val) => { f[k] = el('textarea', {}); f[k].value = val || ''; return el('label', { class: 'full' }, label, f[k]); };
+  const photo = (k, label) => {
+    const th = el('img', { class: 'thumb', alt: '' }); if (img[k]) th.src = img[k]; else th.classList.add('hide');
+    const fi = el('input', { type: 'file', accept: 'image/*' });
+    fi.onchange = async () => {
+      if (!fi.files[0]) return; msg.textContent = 'Envoi de la photo…';
+      try { img[k] = await uploadPhoto(fi.files[0]); th.src = img[k]; th.classList.remove('hide'); msg.textContent = ''; }
+      catch (e) { msg.textContent = e.message === 'auth' ? '' : 'Envoi de la photo impossible.'; }
+    };
+    return el('label', {}, label, el('div', { class: 'photo' }, th, fi));
+  };
+  const feat = (M && M.feature) || [];
+  const save = el('button', { class: 'btn', type: 'button', onclick: async () => {
+    msg.textContent = '';
+    const data = { tagline: f.tagline.value, tagline_en: f.tagline_en.value, intro: f.intro.value, intro_en: f.intro_en.value, hero: img.hero, amb1: img.amb1, amb2: img.amb2, feature1: f.feature1.value, feature2: f.feature2.value };
+    try {
+      await api('content', { method: 'PUT', body: JSON.stringify({ key: 'maison:' + key, data }) });
+      const clean = {}; Object.keys(data).forEach((k) => { if (String(data[k]).trim()) clean[k] = String(data[k]).trim(); });
+      rows.content = (rows.content || []).filter((x) => x.key !== 'maison:' + key).concat([{ key: 'maison:' + key, data: clean }]);
+      msg.style.color = '#4C7A4C'; msg.textContent = 'Enregistré. Visible sur le site d’ici une minute.';
+    } catch (e) { msg.style.color = ''; msg.textContent = e.message === 'auth' ? '' : 'Enregistrement impossible (image invalide ?).'; }
+  } }, 'Enregistrer');
+  const reset = el('button', { class: 'btn ghost', type: 'button', onclick: async () => {
+    if (!confirm('Revenir aux textes et visuels d’origine pour cette maison ?')) return;
+    try { await api('content', { method: 'DELETE', body: JSON.stringify({ key: 'maison:' + key }) }); location.reload(); }
+    catch (e) { if (e.message !== 'auth') alert('Réinitialisation impossible.'); }
+  } }, 'Revenir à l’original');
+  return el('div', { class: 'pform' },
+    text('tagline', 'Phrase d’accroche (français)', saved.tagline || (M && M.tagline), true), text('tagline_en', 'Phrase d’accroche (anglais)', saved.tagline_en, true),
+    area('intro', 'Présentation (français)', saved.intro || (M && M.intro)), area('intro_en', 'Présentation (anglais)', saved.intro_en),
+    photo('hero', 'Image principale (en haut de la page)'), el('div'), photo('amb1', 'Ambiance 1'), photo('amb2', 'Ambiance 2'),
+    text('feature1', 'Pièce signature 1 (référence)', saved.feature1 || feat[0]), text('feature2', 'Pièce signature 2 (référence)', saved.feature2 || feat[1]),
+    msg, el('div', { class: 'full', style: 'display:flex;gap:10px' }, save, reset));
+}
+function renderContent() {
+  const list = $('list');
+  list.append(el('div', { class: 'ptop' }, el('span', { class: 'muted' }, 'Modifiez les textes et visuels de chaque page Maison. Les champs vides gardent le contenu d’origine.')));
+  const M = window.MIZU && window.MIZU.maisons;
+  if (!M) { list.append(el('div', { class: 'empty' }, 'Chargement…')); return; }
+  Object.keys(M).forEach((key) => {
+    const edited = (rows.content || []).some((x) => x.key === 'maison:' + key);
+    list.append(el('div', { style: 'margin-bottom:12px' },
+      el('button', { class: 'tab' + (openMaison === key ? ' on' : ''), style: 'width:100%;text-align:left;border-radius:16px', onclick: () => { openMaison = openMaison === key ? null : key; render(); } }, M[key].name, edited ? el('i', {}, 'modifié') : ''),
+      openMaison === key ? maisonForm(key) : ''));
+  });
 }
 
 async function start() {
